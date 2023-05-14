@@ -7,25 +7,25 @@
   * [Results](#results)
   * [References](#references)
 
-# BiofilmPhageDES
+# BiofilmDES
 
 ## Introduction
-This work comprises of a discrete element simulation of a biofilm and bacteriophage (phage). The susceptible bacteria are represented as rod shaped bacterium such as E. coli and the phage are modelled as tailed phage such as T4, although the code is easily adaptable to other agent geometries. The biofilm component of the code is strongly based on [1]. The dynamics are assumed to be overdamped as due to the low Reynold number environment and interactions between bacterium are based on Hertzian contact forces.
+This work comprises of a discrete element simulation of a biofilm and bacteriophage (phage). The susceptible bacteria are represented as rod shaped bacterium such as Escherichia coli and the phage are modelled as tailed phage such as T4. This was recently updated to also include spherical bacteria. The biofilm component of the code is strongly based on ref. [1]. The dynamics are assumed to be overdamped due to the low Reynold number environment and interactions between bacterium are based on Hertzian contact forces.
 
 The code extends previous work to include novel features, such as elastic links between dividing bacterium in order in an attempt to recreate the interesting intra-colony channels seen in [2,3]. This is the first main goal of the project. Work before in [3] used growing, flexible, elastic rods to achieve qualitatively similar patterns seen in chaining E. coli and B. subtilis. Reproducing such an effect in a discrete element simulation should be enough of a minimal model to determine if the only reqirement is the additional elastic link.
 
 The second important aspect is to include the presence and effect of phage. Hopefully, spontaneous channel formation will provide an interesting topology for the phage to infect.
 
- <img src="pair_interaction.png" width=500 align=right>
+ <img src="Images/pair_interaction.png" width=500 align=right>
 
 An example of how Hertzian forces between spherocylinders are represented is displayed on the right. This is the 2D projection with the extension to 3D straightforward. Parallel interactions take the center of the spherocylinders at the midpoint of the overlap, although this can be removed with no noticeable effect on the output in some preliminary tests.
 
 ## More code details
 Euler method with basic updating currently used for simplicity but higher order methods will be implemented later. The collision detection is based on finding the distance betweeen line segments in 3D from [4,5] and computing the Hertzian interaction as in [1] based on this overlap.
 
-At the moment, I use a uniform grid to create linked cell lists (giving O(N) complexity) as due to short range interactions only a few cells need to be checked for interation with any other given cell, although Verlet lists may be more efficient for dense packing (need to check this). My grid is still in 2D but will be updated to 3D shortly.
+At the moment, I use a uniform grid to create linked cell lists (giving O(N) complexity) as due to short range interactions only a few cells need to be checked for interation with any other given cell, although Verlet lists may be more efficient for dense packing (need to check this).
 
-Upon division, there is a chance given by the linking probability that cells will be connected by an elastic rod. This is currently drawn from a uniform distribution. The elastic rod has a bending stiffness K and a modulus of elasticity kappa. To account for bending stiffness, there are two elements locked into the poles of the bacteria, moved inside so as not to inadvertently get caught in two bacteria overlapping. The figure below shows the set up.
+Upon division, there is a chance given by the linking probability that cells will be connected by an elastic rod. This is currently drawn from a uniform distribution. The elastic rod has a bending modulus, $B$, and a compression modulus, K. To account for bending stiffness, there are two elements locked into the poles of the bacteria, moved inside so as not to inadvertently get caught in two bacteria overlapping. The figure below shows the set up.
 
 <p align="center">
  <img src="coupled_ecoli_bending_potential_zoom.png" width=750 align=below>
@@ -39,14 +39,14 @@ This package uses CMake (v >= 2.8) for compilation and assumes g++ 9.3.0 or abov
 To quickly build and make a binary, call `quickMake.sh` from within the `Simulation/` directory.
 This will create a build directory `Simulation/build/`, create a MakeFile with CMake, make the package, and run a simple test to verify if it works.
 
-To do this manually repeat the steps in `quickMake.sh`. 
-A discrete build directory is highly recommended when using CMake and is encouraged. 
+To do this manually repeat the steps in `quickMake.sh`.
+A discrete build directory is highly recommended when using CMake and is encouraged.
 
 The code shouldn't take any command line arguments, but legacy instructions are as follows:
-Where the command line inputs are in the order log_file_index, spring_constant and linking_probability. 
+Where the command line inputs are in the order log_file_index, spring_constant and linking_probability.
 This is likely to change shortly to include the bending stiffness.  
 
-## Files
+<!-- ## Files
 
   ```plotting.nb```:
   Mathematica script for visualising output
@@ -75,7 +75,7 @@ I've been using ```ffmpeg``` in ```bash``` to make movies by stitching together 
 
 <p align="center">
  <img src="vis_biofilm_00601_2D.png" width=750 align=below>
-</p>
+</p> -->
 
 ## References
 
