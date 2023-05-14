@@ -1,0 +1,5 @@
+cell_type	cell_id	length	radius	pos_x	pos_y	pos_z	ori_x	ori_y	ori_z
+Spherical	1	0	0.769324	0.192389	1.27251	0	0	0	0
+RodShaped	1	4.39208	0.5	1.85507	0.0731942	0	0.96924	-0.246117	0
+Spherical	2	0	0.759764	-0.234806	2.74021	0	0	0	0
+RodShaped	2	3.96081	0.5	-1.85809	-0.0742467	0	0.975928	-0.218093	0

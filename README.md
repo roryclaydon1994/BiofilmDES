@@ -1,2 +1,102 @@
-# BiofilmDES
-Individual based simulations of simple bacterial communities.
+- [BiofilmPhageDES](#biofilmphagedes)
+  * [Introduction](#introduction)
+  * [More code details](#more-code-details)
+  * [Documentation](#documentation)
+  * [Compilation](#compilation)
+  * [Files](#files)
+  * [Results](#results)
+  * [References](#references)
+
+# BiofilmPhageDES
+
+## Introduction
+This work comprises of a discrete element simulation of a biofilm and bacteriophage (phage). The susceptible bacteria are represented as rod shaped bacterium such as E. coli and the phage are modelled as tailed phage such as T4, although the code is easily adaptable to other agent geometries. The biofilm component of the code is strongly based on [1]. The dynamics are assumed to be overdamped as due to the low Reynold number environment and interactions between bacterium are based on Hertzian contact forces.
+
+The code extends previous work to include novel features, such as elastic links between dividing bacterium in order in an attempt to recreate the interesting intra-colony channels seen in [2,3]. This is the first main goal of the project. Work before in [3] used growing, flexible, elastic rods to achieve qualitatively similar patterns seen in chaining E. coli and B. subtilis. Reproducing such an effect in a discrete element simulation should be enough of a minimal model to determine if the only reqirement is the additional elastic link.
+
+The second important aspect is to include the presence and effect of phage. Hopefully, spontaneous channel formation will provide an interesting topology for the phage to infect.
+
+ <img src="pair_interaction.png" width=500 align=right>
+
+An example of how Hertzian forces between spherocylinders are represented is displayed on the right. This is the 2D projection with the extension to 3D straightforward. Parallel interactions take the center of the spherocylinders at the midpoint of the overlap, although this can be removed with no noticeable effect on the output in some preliminary tests.
+
+## More code details
+Euler method with basic updating currently used for simplicity but higher order methods will be implemented later. The collision detection is based on finding the distance betweeen line segments in 3D from [4,5] and computing the Hertzian interaction as in [1] based on this overlap.
+
+At the moment, I use a uniform grid to create linked cell lists (giving O(N) complexity) as due to short range interactions only a few cells need to be checked for interation with any other given cell, although Verlet lists may be more efficient for dense packing (need to check this). My grid is still in 2D but will be updated to 3D shortly.
+
+Upon division, there is a chance given by the linking probability that cells will be connected by an elastic rod. This is currently drawn from a uniform distribution. The elastic rod has a bending stiffness K and a modulus of elasticity kappa. To account for bending stiffness, there are two elements locked into the poles of the bacteria, moved inside so as not to inadvertently get caught in two bacteria overlapping. The figure below shows the set up.
+
+<p align="center">
+ <img src="coupled_ecoli_bending_potential_zoom.png" width=750 align=below>
+</p>
+
+## Documentation
+See ```main.pdf``` for an explanation of how all the forces are calculated and a bit more background. Apart from the last part on the description of the forces, this is still very much a work in progress.
+
+## Compilation
+This package uses CMake (v >= 2.8) for compilation and assumes g++ 9.3.0 or above.
+To quickly build and make a binary, call `quickMake.sh` from within the `Simulation/` directory.
+This will create a build directory `Simulation/build/`, create a MakeFile with CMake, make the package, and run a simple test to verify if it works.
+
+To do this manually repeat the steps in `quickMake.sh`. 
+A discrete build directory is highly recommended when using CMake and is encouraged. 
+
+The code shouldn't take any command line arguments, but legacy instructions are as follows:
+Where the command line inputs are in the order log_file_index, spring_constant and linking_probability. 
+This is likely to change shortly to include the bending stiffness.  
+
+## Files
+
+  ```plotting.nb```:
+  Mathematica script for visualising output
+
+  ```output_raw_data.tar.gz```:
+  Small example output data for growth of a sitff linked biofilm, essentially 2D. Line 1 column headers are:\
+  cell_id	length	diameter	com_vec_x	com_vec_y	com_vec_z	orientation_x	orientation_y	orientation_z *neighbours*	upper_link	lower_link\
+  Delimeter is "\t".
+  * cell_id: (long) unique identifier for each cell
+  * length: (double) current cell length from pole to pole (note this does not include caps! end to end length is current length + diameter)
+  * diameter: (double) nondimensionalised cell diameter
+  * com_vec_x: (double) center of mass x coordinate (same for y,z suffix)
+  * *neighbours*: comma seperated list of cell ids of potential contacts and the potential contacts' potential contacts. This is only outputted if CLOSEST is defined.
+  * orientation_x: (double) cell orientation vector x component (same for y,z suffix)
+  * upper_link: (long) unique identifier of the cell to which the upper end of the present cell is connected to (None if not connected). Similar for lower_link
+
+```large_sim_high_bending_stiffness.mp4```:
+  Example output for large sim (~33000 cells) for high bending stiffness ```K=1```, linking probability ```p=0.995``` and spring constant ```kappa=1.1```.
+
+## Making movies
+I've been using ```ffmpeg``` in ```bash``` to make movies by stitching together outputted ```png``` files. These are assumed to be in the ```output``` folder and have the filename pattern ```vis_biofilm_%05d.png```. An example for creating the movie and playing it is included below.
+
+```ffmpeg -r 10 -i output/vis_biofilm_%05d.png -c:v libx264 -vf fps=25 -pix_fmt yuv420p output/vis_biofilm_nondim.mp4 && ffplay output/vis_biofilm_nondim.mp4```
+
+## Results
+
+<p align="center">
+ <img src="vis_biofilm_00601_2D.png" width=750 align=below>
+</p>
+
+## References
+
+1. [Mechanically driven growth of quasi-two dimensional microbial colonies,\
+    F.D.C. Farrell, O. Hallatschek, D. Marenduzzo, B. Waclaw,\
+    Phys. Rev. Lett. 111, 168101 (2013).](https://doi-org.ezproxy.is.ed.ac.uk/10.1103/PhysRevLett.111.168101)
+
+1.  [Intra-colony channels in E. coli function as a nutrient uptake system. \
+     L. M.Rooney, W. B. Amos, P. A. Hoskisson et al.,\
+     ISME J 14, 2461–2473 (2020).](https://doi.org/10.1038/s41396-020-0700-9)
+
+1.   [Emergence of active nematics in chaining bacterial biofilms. \
+     Y. Yaman, E. Demir, R. Vetter et al.,\
+     Nat. Commun. 10, 2285 (2019).](https://doi.org/10.1038/s41467-019-10311-z)
+
+1.  [Three-dimensional distinct element simulation of spherocylinder crystallization.\
+    L. Pournin, M. Weber, M. Tsukahara et al.\
+    Granul. Matter 7, 119–126 (2005).](https://doi.org/10.1007/s10035-004-0188-4)
+
+1.  [A fast algorithm to evaluate the shortest distance between rods,\
+    C. Vega, S. Lago,\
+    Comput. Chem., 18(1), 55-59 (1994)](https://doi.org/10.1016/0097-8485(94)80023-5)
+
+1.  I would like to thank Bartlomiej Waclaw from the University of Edinburgh for some very useful discussions on algorithm stability, timestep choice and some    potential optimisations to try out in future
