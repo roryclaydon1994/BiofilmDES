@@ -74,7 +74,7 @@ Firstly, clone this repo using
 
 `git clone git@github.com:roryclaydon1994/BiofilmDES.git`
 
-This package uses CMake (v >= 2.8) for compilation and assumes g++ 9.3.0 or above. Tested with cmake version 3.23.0 and g++ 11.3.0 on Ubuntu 20. The instructions here rely on familiarity with terminal.
+This package uses CMake (v >= 3.16.0) for compilation and assumes g++ 9.3.0 or above. Tested with cmake version 3.23.0 and g++ 11.3.0 on Ubuntu 20. The instructions here rely on familiarity with terminal.
 
 Building within the source directory will be blocked. To begin, navigate to the `Simulation` folder and create a folder called `build` here.
 From terminal, in the project root we would write
