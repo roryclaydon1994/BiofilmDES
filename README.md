@@ -22,10 +22,18 @@ The biofilm component of the code is strongly based on ref. [1]. The dynamics ar
 
 ## Rod shaped interactions
 
-An example of how Hertzian forces between spherocylinders are represented is displayed below. On the right, the method of applying the interaction between rods based on two elastic spheres is demonstrated. On the right, the implementation of parallel interactions is shown. This interaction is likely to be updated in the future!
+The 3D implementation of the rods and parameterisation used for evaluating where the closest points on the line segments are is shown below.
 
- <img src="Images/pair_interaction.png" width=500 align=left>
- <img src="Images/line_segment.png" width=1000 align=right>
+<img src="Images/single_cell_thesis.png" width=1000 align=center>
+
+
+An example of how Hertzian forces between spherocylinders are represented is displayed below.
+
+<img src="Images/pair_interaction.png" width=500 align=center>
+
+The method of applying the interaction between rods is based on two elastic spheres is demonstrated. The implementation of parallel interactions is shown below, but this is likely to be updated in the future!
+
+ <img src="Images/line_segment.png" width=1000 align=center>
 
 <div style="page-break-after: always"></div>
 
@@ -34,14 +42,29 @@ Euler method with basic updating currently used for simplicity but higher order 
 
 At the moment, I use a uniform grid to create linked cell lists (giving O(N) complexity) as due to short range interactions only a few cells need to be checked for interation with any other given cell, although Verlet lists may be more efficient for dense packing (need to check this).
 
-Upon division, there is a chance given by the linking probability that cells will be connected by an elastic rod. This is currently drawn from a uniform distribution. The elastic rod has a bending modulus, $B$, and a compression modulus, K. To account for bending stiffness, there are two elements locked into the poles of the bacteria, moved inside so as not to inadvertently get caught in two bacteria overlapping. The figure below shows the set up.
+Upon division, there is a chance given by the linking probability that cells will be connected by an elastic rod. This is currently drawn from a uniform distribution. The elastic rod has a bending modulus, $B$, and a compression modulus, $K$. To account for bending stiffness, there are two elements locked into the poles of the bacteria, moved inside so as not to inadvertently get caught in two bacteria overlapping. The figure below shows the set up.
 
 <p align="center">
- <img src="coupled_ecoli_bending_potential_zoom.png" width=750 align=below>
+ <img src="Images/coupled_ecoli_bending_potential_zoom_mod.png" width=750 align=below>
+</p>
+
+## Example output
+### 3D
+The image below is one giant chain.
+
+<p align="center">
+ <img src="Images/vis_biofilm_00601_3D.png" width=1000 align=below>
+</p>
+
+### 2D
+My thesis primarily focussed on the effect of increaing the chaining probability from 0 to 1 and the effect on the colony morphology as a result of this. The following is the morphology phase diagram as a function of linking probability, $p_\ell$ and bending modulus, $\beta$ ($\beta$ is the non-dimensional $B$).
+
+<p align="center">
+ <img src="Images/morphology_phage_diagram.png" width=1000 align=below>
 </p>
 
 ## Documentation
-See ```main.pdf``` for an explanation of how all the forces are calculated and a bit more background. Apart from the last part on the description of the forces, this is still very much a work in progress.
+The ```Doxygen``` folder contains a ```doxygen.conf``` file which should automatically generate documentation for this code. In the event you do not have Doxygen, I have included the generated file ```Doxygen/html/index.html```. This should open with all browsers and will display the list of files, classes, functions etc., with notes on what they do and how to use them.
 
 ## Compilation
 This package uses CMake (v >= 2.8) for compilation and assumes g++ 9.3.0 or above.
