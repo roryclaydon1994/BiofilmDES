@@ -25,7 +25,9 @@ The biofilm component of the code is strongly based on ref. [1]. The dynamics ar
 An example of how Hertzian forces between spherocylinders are represented is displayed below. On the right, the method of applying the interaction between rods based on two elastic spheres is demonstrated. On the right, the implementation of parallel interactions is shown. This interaction is likely to be updated in the future!
 
  <img src="Images/pair_interaction.png" width=500 align=left>
- <img src="Images/line_segment.png" width=500 align=right>
+ <img src="Images/line_segment.png" width=1000 align=right>
+
+***
 
 ## More code details
 Euler method with basic updating currently used for simplicity but higher order methods will be implemented later. The collision detection is based on finding the distance betweeen line segments in 3D from [4,5] and computing the Hertzian interaction as in [1] based on this overlap.
