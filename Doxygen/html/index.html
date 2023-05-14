@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: Main Page</title>
+<title>BiofilmDES: Main Page</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">BiofilmDES
    </div>
   </td>
  </tr>
@@ -60,11 +60,112 @@ $(function() {
 </iframe>
 </div>
 
-<div class="header">
+<div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">My Project Documentation</div>  </div>
+<div class="title">BiofilmDES Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p><a class="anchor" id="md__home_rory_BiofilmDES_README"></a></p><ul>
+<li><a href="#biofilmphagedes">BiofilmPhageDES</a><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#more-code-details">More code details</a></li>
+<li><a href="#documentation">Documentation</a></li>
+<li><a href="#compilation">Compilation</a></li>
+<li><a href="#files">Files</a></li>
+<li><a href="#results">Results</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md0"></a>
+BiofilmDES</h1>
+<p><em>Still under construction! Check back soon for the latest details :)</em></p>
+<h2><a class="anchor" id="autotoc_md1"></a>
+Introduction</h2>
+<p>This repo contains a simulation framework for a discrete element simulation of a bacterial colony and bacteriophage (phage). The susceptible bacteria are represented as rod shaped bacterium such as Escherichia coli and the phage are based on tailed phage such as T4, although in the simulations this are currently point particles for simplicity. Spherical bacteria may also be included.</p>
+<p>The biofilm component of the code is strongly based on ref. [1]. The dynamics are assumed to be overdamped due to the low Reynold number environment and interactions between bacterium are based on Hertzian contact forces. The code extends previous work to include novel features, such as elastic links between dividing bacterium. This allows for simulations of chaining bacterial colonies, and also allows us to interpolate between non-chaining and fully chaining colonies. I discuss many aspects of altering the chaining interaction in detail in my thesis, but for general users, the take home is that simple changes to cell-cell interactions can have quite profound influences on the evolution of the colony.</p>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Rod shaped interactions</h2>
+<p>The 3D implementation of the rods and parameterisation used for evaluating where the closest points on the line segments are is shown below.</p>
+<p><img src="Images/single_cell_thesis.png" alt="" width="1000" align="center" class="inline"/> <img src="single_cell_thesis.png" alt="" class="inline" title="3D implementation of the rods and parameterisation used for evaluating where the closest points on the line segments."/></p>
+<p>An example of how Hertzian forces between spherocylinders are represented is displayed below.</p>
+<p><img src="Images/pair_interaction.png" alt="" width="500" align="center" class="inline"/></p>
+<p>The method of applying the interaction between rods is based on two elastic spheres is demonstrated. The implementation of parallel interactions is shown below, but this is likely to be updated in the future!</p>
+<p><img src="Images/line_segment.png" alt="" width="1000" align="center" class="inline"/></p>
+<div style="page-break-after: always"></div><h2><a class="anchor" id="autotoc_md3"></a>
+More code details</h2>
+<p>Euler method with basic updating currently used for simplicity but higher order methods will be implemented later. The collision detection is based on finding the distance betweeen line segments in 3D from [4,5] and computing the Hertzian interaction as in [1] based on this overlap.</p>
+<p>At the moment, I use a uniform grid to create linked cell lists (giving $\mathcal{O}(N)$ complexity) as due to short range interactions only a few cells need to be checked for interation with any other given cell, although Verlet lists may be more efficient for dense packing (need to check this).</p>
+<p>Upon division, there is a chance given by the linking probability that cells will be connected by an elastic rod. This is currently drawn from a uniform distribution. The elastic rod has a bending modulus, $B$, and a compression modulus, $K$. To account for bending stiffness, there are two elements locked into the poles of the bacteria, moved inside so as not to inadvertently get caught in two bacteria overlapping. The figure below shows the set up.</p>
+<p><img src="Images/coupled_ecoli_bending_potential_zoom_mod.png" alt="" width="750" align="below" class="inline"/> </p>
+<h2><a class="anchor" id="autotoc_md4"></a>
+Example output</h2>
+<h3><a class="anchor" id="autotoc_md5"></a>
+3D</h3>
+<p>The image below is one giant chain.</p>
+<p><img src="Images/vis_biofilm_00601_3D.png" alt="" width="1000" align="below" class="inline"/> </p>
+<h3><a class="anchor" id="autotoc_md6"></a>
+2D</h3>
+<p>My thesis primarily focussed on the effect of increaing the chaining probability from 0 to 1 and the effect on the colony morphology as a result of this. The following is the morphology phase diagram as a function of linking probability, $p_\ell$ and bending modulus, $\beta$ ($\beta$ is the non-dimensional $B$).</p>
+<p><img src="Images/morphology_phage_diagram.png" alt="" width="1000" align="below" class="inline"/> </p>
+<h2><a class="anchor" id="autotoc_md7"></a>
+Documentation</h2>
+<p>The <code>Doxygen</code> folder contains a <code>doxyconfig.conf</code> file which should automatically generate documentation for this code. In the event you do not have Doxygen, I have included the generated file <code>Doxygen/html/index.html</code>. This should open with all browsers and will display the list of files, classes, functions etc., with notes on what they do and how to use them.</p>
+<h2><a class="anchor" id="autotoc_md8"></a>
+Compilation</h2>
+<p>Firstly, clone this repo using</p>
+<p><code>git clone git@github.com:roryclaydon1994/BiofilmDES.git</code></p>
+<p>This package uses CMake (v &gt;= 3.16.0) for compilation and assumes g++ 9.3.0 or above. Tested with cmake version 3.23.0 and g++ 11.3.0 on Ubuntu 20. The instructions here rely on familiarity with terminal.</p>
+<p>Building within the source directory will be blocked. To begin, navigate to the <code>Simulation</code> folder and create a folder called <code>build</code> here. From terminal, in the project root we would write</p>
+<p><code>cd Simulation &amp;&amp; mkdir build &amp;&amp; cd build</code></p>
+<p>From here, we can compile the project without polluting our source directory. We generate the MakeFiles using cmake:</p>
+<p><code>cmake ..</code></p>
+<p>This will use the top level CMakeLists.txt from the Simulation folder, which calls the CMakeLists.txts in the sub folders recursively.</p>
+<p>If this is successful, we should be able to compile the simulation executable using make. To do this, run</p>
+<p><code>make -j n</code></p>
+<p>where n is an integer representing the number of threads to compile with.</p>
+<p>If successful, the project directory tree will be recreated in build, with the compiled objects mapped on to this tree. The executable can now be found in <code>build/Main</code>. As we should still be in build, this can be run using</p>
+<p><code>./Main/main.out ${out_dir_name} $Kappa $BendRig $LinkingProb $ForceThresh $AspectRatio $GrowthRate</code></p>
+<p>Note, by default this will attempt to run with all available cores. See parallelisation section for more details.</p>
+<p>The parameters are as follows:</p><ul>
+<li>out_dir_name is the directory to write the output files to</li>
+<li>Kappa is the non-dim compression modulus (1 is sensible)</li>
+<li>BendRig is the non-dim bending modulus (again, 1 is sensible! See phase diagram for how this affects morphology in 2D)</li>
+<li>LinkingProb is the probability that daughter cells link together upon division (0-1).</li>
+<li>ForceThresh is not currently implemented so any value is fine. This will be the force threshold above which chains can break.</li>
+<li>AspectRatio is the final length of the cell at which it divides (3-5 is reasonable).</li>
+<li>GrowthRate is the rate of linear growth of a cell (non-dim units: 2e-4 is a good choice)</li>
+</ul>
+<p>See my thesis for more details on exactly what these parameters do!</p>
+<p>As many of these steps are routine, there is a <code>quickMake.sh</code> from within the <code>Simulation/</code> directory. This will create a build directory <code>Simulation/build/</code>, create a MakeFile with CMake, make the package, and run a simple test to verify it worked!</p>
+<h2><a class="anchor" id="autotoc_md10"></a>
+Parallelisation</h2>
+<p>Force calculations are parallelised using OpenMP, although this has not really been tested for performance. I intend to add a switch to a more efficient serial implementation, OpenMP parallelisation, MPI parallelisation and a GPU implementation.</p>
+<p>All on the way!</p>
+<p><em>Still writing :)</em></p>
+<h2><a class="anchor" id="autotoc_md11"></a>
+References</h2>
+<ol type="1">
+<li><a href="https://doi-org.ezproxy.is.ed.ac.uk/10.1103/PhysRevLett.111.168101">Mechanically driven growth of quasi-two dimensional microbial colonies,\ F.D.C. Farrell, O. Hallatschek, D. Marenduzzo, B. Waclaw,\ Phys. Rev. Lett. 111, 168101 (2013).</a></li>
+</ol>
+<ol type="1">
+<li><a href="https://doi.org/10.1038/s41396-020-0700-9">Intra-colony channels in E. coli function as a nutrient uptake system. \ L. M.Rooney, W. B. Amos, P. A. Hoskisson et al.,\ ISME J 14, 2461–2473 (2020).</a></li>
+</ol>
+<ol type="1">
+<li><a href="https://doi.org/10.1038/s41467-019-10311-z">Emergence of active nematics in chaining bacterial biofilms. \ Y. Yaman, E. Demir, R. Vetter et al.,\ Nat. Commun. 10, 2285 (2019).</a></li>
+</ol>
+<ol type="1">
+<li><a href="https://doi.org/10.1007/s10035-004-0188-4">Three-dimensional distinct element simulation of spherocylinder crystallization. L. Pournin, M. Weber, M. Tsukahara et al. Granul. Matter 7, 119–126 (2005).</a></li>
+</ol>
+<ol type="1">
+<li><a href="https://doi.org/10.1016/0097-8485(94)80023-5">A fast algorithm to evaluate the shortest distance between rods,\ C. Vega, S. Lago,\ Comput. Chem., 18(1), 55-59 (1994)</a></li>
+</ol>
+<h2><a class="anchor" id="autotoc_md12"></a>
+Acknowledgements</h2>
+<ol type="1">
+<li>I would like to thank Aidan Brown, Tyler Shendruk and Bartlomiej Waclaw from the University of Edinburgh for many helpful discussions. </li>
+</ol>
+</div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
