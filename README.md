@@ -131,4 +131,6 @@ I've been using ```ffmpeg``` in ```bash``` to make movies by stitching together 
     C. Vega, S. Lago,\
     Comput. Chem., 18(1), 55-59 (1994)](https://doi.org/10.1016/0097-8485(94)80023-5)
 
-1.  I would like to thank Bartlomiej Waclaw from the University of Edinburgh for some very useful discussions on algorithm stability, timestep choice and some    potential optimisations to try out in future
+## Acknowledgements
+
+1.  I would like to thank Aidan Brown, Tyler Shendruk and Bartlomiej Waclaw from the University of Edinburgh for many helpful discussions.
