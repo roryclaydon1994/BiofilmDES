@@ -24,11 +24,28 @@
 #include "IO.hpp"
 #include "PolyBiofilm.hpp"
 
-void initialiseBiofilm()
+std::vector<IBacterium*> initialiseBiofilm()
 {
   // Check if there are any existing files in this directory, and if so begin
   // from here
   std::cout << "The sim directory is: " << sim_out_dir << '\n';
+
+  // Set the initial conditions
+  std::vector<IBacterium*> access_vec;
+
+  if ( !std::filesystem::exists(sim_out_dir) )
+  {
+    std::filesystem::create_directories(sim_out_dir);
+    std::cout << "No files found, restarting from a single cell." << '\n';
+    auto* rod = new RodShapedBacterium{
+      0,0,0,
+      0,constants::pi*0.5,
+      RodShapedBacterium::mAvgGrwthRate,
+      0.5*(RodShapedBacterium::mAvgDivLen-2*RodShapedBacterium::mRadius)
+    };
+    access_vec.push_back(rod);
+    return access_vec;
+  }
 
   int count { 0 };
   std::filesystem::path p1 { sim_out_dir };
@@ -40,26 +57,19 @@ void initialiseBiofilm()
   std::string final_file { sim_out_dir+"final_"  +ss.str()+".dat" };
   std::string load_file  { sim_out_dir+"biofilm_"+ss.str()+".dat" };
 
-  // Set the initial conditions
-  std::vector<IBacterium*> access_vec;
-
   if ( std::filesystem::exists( final_file ) )
   {
     std::cout << "This directory " << final_file
               << " has already completed, exiting..." << '\n';
     exit(12);
   }
-  else if ( std::filesystem::exists( load_file ) )
+  if ( std::filesystem::exists( load_file ) )
   {
     std::cout << "Attempting to reload from " << load_file << '\n';
     populateCellsFromFile(load_file,access_vec);
     exit(24);
   }
-  else
-  {
-    std::cout << "No files found, restarting from a single cell." << '\n';
-    access_vec.push_back(new RodShapedBacterium{0,0,0});
-  }
+
 
   // SphericalBacterium* sphere = new SphericalBacterium{0,2,0};
   // access_vec.push_back(sphere);
@@ -92,7 +102,8 @@ void initialiseBiofilm()
 #else // else no phage
 #endif
 
-  pb.runSim();
+//  pb.runSim();
+  return access_vec;
 }
 
 int main(int argc, char const *argv[])
@@ -136,7 +147,27 @@ int main(int argc, char const *argv[])
     const double force_thresh    { std::stod( argv[5]) }; // Threshold force before breaking
     initialiseChainingParameters(kappa,bend_rig,linking_prob,force_thresh);
     sim_out_dir += "/" + run_dir + "/";
-    initialiseBiofilm();
+    std::vector<IBacterium*> initial_conditions{ initialiseBiofilm() };
+    PolyBiofilm pb { initial_conditions };
+    pb.runSim();
+  }
+  else if ( argc==8 )
+  {
+    const std::string run_dir    {            argv[1]  }; // Run directory
+    const double kappa           { std::stod( argv[2]) }; // Spring tension
+    const double bend_rig        { std::stod( argv[3]) }; // Bending rigidity
+    const double linking_prob    { std::stod( argv[4]) }; // Probability daughters link
+    const double force_thresh    { std::stod( argv[5]) }; // Threshold force before breaking
+    const double aspect_ratio    { std::stod( argv[6]) }; // Division length of the bacterium
+    const double growth_rate     { std::stod( argv[7]) }; // Growth rate
+
+    initialiseRodParameters(aspect_ratio,growth_rate);
+    initialiseChainingParameters(kappa,bend_rig,linking_prob,force_thresh);
+
+    sim_out_dir += "/" + run_dir + "/";
+    std::vector<IBacterium*> initial_conditions{ initialiseBiofilm() };
+    PolyBiofilm pb { initial_conditions };
+    pb.runSim();
   }
   else
   {

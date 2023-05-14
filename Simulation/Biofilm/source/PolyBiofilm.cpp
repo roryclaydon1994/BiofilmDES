@@ -86,15 +86,15 @@ void PolyBiofilm::createLogFile()
   values.push_back(RodShapedBacterium::mForceThresh);
 #endif
 
-  for ( uint ii=0; ii<headers.size(); ++ii )
+  for (const auto & header : headers)
   {
-    out_file << headers[ii] << '\t';
+    out_file << header << '\t';
   }
   out_file << "SEED" << '\n';
 
-  for ( uint ii=0; ii<values.size(); ++ii )
+  for (double value : values)
   {
-    out_file << values[ii] << '\t';
+    out_file << value << '\t';
   }
   out_file << gen_rand.getSeed() << '\n';
   out_file.close();

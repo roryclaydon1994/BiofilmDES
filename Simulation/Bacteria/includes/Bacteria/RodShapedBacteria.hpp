@@ -509,6 +509,11 @@ void printInteraction(std::ostream &out, const RodShapedBacterium &cell,
                       const Vec3 &force_on_me,
                       const Vec3 &torque_on_me);
 
+void initialiseRodParameters(double aspect_ratio, double growth_rate);
+/**<
+ * Set the hyper parameters for the general rod shaped bacterium class
+ */
+
 #ifdef ADHESION
 void initialiseAdhesionParameters(
   double kappa_depletion,

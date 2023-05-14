@@ -163,6 +163,20 @@ void initialiseAdhesionParameters(
 }
 #endif
 
+void initialiseRodParameters(
+  double aspect_ratio,
+  double growth_rate
+)
+{
+  RodShapedBacterium::mAvgDivLen = aspect_ratio;
+  RodShapedBacterium::mAvgGrwthRate = growth_rate;
+  std::cout << "Rod hyperparmeters are set as:"   << '\n';
+  std::cout << "mAvgDivLen\t: "
+            <<  RodShapedBacterium::mAvgDivLen    << '\n';
+  std::cout << "mAvgGrwthRate\t: "
+            << RodShapedBacterium::mAvgGrwthRate  << '\n';
+}
+
 #ifdef CHAINING
 void initialiseChainingParameters(
   double kappa,

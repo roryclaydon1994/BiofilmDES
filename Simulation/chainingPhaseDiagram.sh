@@ -2,19 +2,19 @@
 #
 # Chaining transition sweep
 #
-#SBATCH --job-name=ChainingPhaseDiagramFinal
-#SBATCH --cpus-per-task=4
+#SBATCH --job-name=AspectGrowthSweep
+#SBATCH --cpus-per-task=1
 #SBATCH --mail-type=END
 #SBATCH --partition=long
-#SBATCH --time=24:00:00
+#SBATCH --time=00:10:00
 #SBATCH --mem=500M
-#SBATCH --output=repeat0_%j.out
-#SBATCH --array=[1-380]%20
+#SBATCH --output=R1_AspectGrowthSweep_repeat0_%j.out
+#SBATCH --array=[1-100]%20
 JJ=$SLURM_ARRAY_TASK_ID
 
 # Set the maximum number of runs below
-Ny=19 # number of bendings
-Nx=20 # number of pls
+Ny=10 # number of bendings
+Nx=10 # number of pls
 Nz=1
 
 idx=$(( ${JJ}-1 )) # index 0 indexed
@@ -32,11 +32,15 @@ II=$(( $x + ${Nx}*${y} ))
 REPEAT=$(( 0 + $z ))
 echo "Array job: $JJ Run: $II Repeat: $REPEAT"
 
-# Set up simulation parameters
+### Set up simulation parameters in simulation units
+# chaining
 Kappa=1
-BendRig=$( bc -l <<< "( 0.02*( 1.5^$y ) )" )
-LinkingProb=$( bc -l <<< "( 0.05*( $x + 1 ) )" )
+BendRig=1
+LinkingProb=0
 ForceThresh=100
+
+AspectRatio=$( bc -l <<< "( 1.5+0.5*$y )" )
+GrowthRate=$( bc -l <<< "( 0.0002*( $x + 1 ) )" )
 
 # Set OMP_NUM_THREADS to match --cpus-per-tasks
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
@@ -59,8 +63,8 @@ echo "== Preparing MakeFile with CMake =="
 echo "== Making =="
 make -j $OMP_NUM_THREADS
 echo "== Running sim =="
-echo "./Main/main.out ${out_dir_name} $Kappa $BendRig $LinkingProb $ForceThresh"
-./Main/main.out ${out_dir_name} $Kappa $BendRig $LinkingProb $ForceThresh
+echo "./Main/main.out ${out_dir_name} $Kappa $BendRig $LinkingProb $ForceThresh $AspectRatio $GrowthRate"
+./Main/main.out ${out_dir_name} $Kappa $BendRig $LinkingProb $ForceThresh $AspectRatio $GrowthRate
 echo "== Clearing build file =="
 cd ..
 rm -rf ./${build_name}

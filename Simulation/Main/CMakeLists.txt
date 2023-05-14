@@ -25,17 +25,17 @@ endif()
 include_directories (includes)
 #configure_file(includes/Version.h.in includes/Version.h)
 
-#add_executable(main.out main.cpp)
-#target_link_libraries(
-#  main.out
-#  PRIVATE
-#  MathUtility
-#  Forces
-#  Phage
-#  Bacteria
-#  Biofilm
-#  IO
-#)
+add_executable(main.out main.cpp)
+target_link_libraries(
+  main.out
+  PRIVATE
+  MathUtility
+  Forces
+  Phage
+  Bacteria
+  Biofilm
+  IO
+)
 
 #add_executable(findOrientationalStiffness.out findOrientationalStiffness.cpp)
 #target_compile_definitions( findOrientationalStiffness.out PUBLIC CHAINING RANDOM_SEED )
@@ -89,15 +89,15 @@ include_directories (includes)
 #  IO
 #)
 
-add_executable(findOrientationalStiffness.out findOrientationalStiffness.cpp)
-target_compile_definitions( findOrientationalStiffness.out PUBLIC CHAINING RANDOM_SEED )
-target_link_libraries(
-  findOrientationalStiffness.out
-  PRIVATE
-  MathUtility
-  Forces
-  Phage
-  Bacteria
-  Biofilm
-  IO
-)
+#add_executable(findOrientationalStiffness.out findOrientationalStiffness.cpp)
+#target_compile_definitions( findOrientationalStiffness.out PUBLIC CHAINING RANDOM_SEED )
+#target_link_libraries(
+#  findOrientationalStiffness.out
+#  PRIVATE
+#  MathUtility
+#  Forces
+#  Phage
+#  Bacteria
+#  Biofilm
+#  IO
+#)

@@ -49,7 +49,7 @@ rm -rf ./build # clear old build directory (if necessary)
 rm -rf ./${build_name}
 echo "== Creating new build directory =="
 mkdir ${build_name}
-cd ./${build_name}
+cd ./${build_name} || exit
 echo "== Preparing MakeFile with CMake =="
 # cmake ..
 ~/cmake-3.23.1/bin/cmake .. -DON_CLUSTER=True

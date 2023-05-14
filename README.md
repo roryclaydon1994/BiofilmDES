@@ -40,7 +40,7 @@ The method of applying the interaction between rods is based on two elastic sphe
 ## More code details
 Euler method with basic updating currently used for simplicity but higher order methods will be implemented later. The collision detection is based on finding the distance betweeen line segments in 3D from [4,5] and computing the Hertzian interaction as in [1] based on this overlap.
 
-At the moment, I use a uniform grid to create linked cell lists (giving O(N) complexity) as due to short range interactions only a few cells need to be checked for interation with any other given cell, although Verlet lists may be more efficient for dense packing (need to check this).
+At the moment, I use a uniform grid to create linked cell lists (giving $\mathcal{O}(N)$ complexity) as due to short range interactions only a few cells need to be checked for interation with any other given cell, although Verlet lists may be more efficient for dense packing (need to check this).
 
 Upon division, there is a chance given by the linking probability that cells will be connected by an elastic rod. This is currently drawn from a uniform distribution. The elastic rod has a bending modulus, $B$, and a compression modulus, $K$. To account for bending stiffness, there are two elements locked into the poles of the bacteria, moved inside so as not to inadvertently get caught in two bacteria overlapping. The figure below shows the set up.
 
@@ -67,7 +67,34 @@ My thesis primarily focussed on the effect of increaing the chaining probability
 The ```Doxygen``` folder contains a ```doxygen.conf``` file which should automatically generate documentation for this code. In the event you do not have Doxygen, I have included the generated file ```Doxygen/html/index.html```. This should open with all browsers and will display the list of files, classes, functions etc., with notes on what they do and how to use them.
 
 ## Compilation
-This package uses CMake (v >= 2.8) for compilation and assumes g++ 9.3.0 or above.
+
+Firstly, clone this repo using
+
+```git clone git@github.com:roryclaydon1994/BiofilmDES.git```
+
+This package uses CMake (v >= 2.8) for compilation and assumes g++ 9.3.0 or above. Tested with cmake version 3.23.0 and g++ 11.3.0 on Ubuntu 20. The instructions here rely on familiarity with terminal.
+
+Building within the source directory will be blocked. To begin, navigate to the ```Simulation``` folder and create a folder called ```build``` here.
+From terminal, in the project root we would write
+
+```cd Simulation && mkdir build && cd build```
+
+From here, we can compile the project without polluting our source directory. We generate the MakeFiles using cmake:
+
+```cmake ..```
+
+This will use the top level CMakeLists.txt from the Simulation folder, which calls the CMakeLists.txts in the sub folders recursively.
+
+If this is successful, we should be able to compile the simulation executable using make. To do this, run
+
+```make -j n```
+
+where n is an integer representing the number of threads to compile with.
+
+If successful, the project directory tree will be recreated in build, with the compiled objects mapped on to this tree. The executable can now be found in ```build/Main```. As we should still be in build, this can be run using
+
+```./Main/```
+
 To quickly build and make a binary, call `quickMake.sh` from within the `Simulation/` directory.
 This will create a build directory `Simulation/build/`, create a MakeFile with CMake, make the package, and run a simple test to verify if it works.
 
