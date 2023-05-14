@@ -26,8 +26,8 @@ The biofilm component of the code is strongly based on ref. [1]. The dynamics ar
 
 The 3D implementation of the rods and parameterisation used for evaluating where the closest points on the line segments are is shown below.
 
-<img src="Images/single_cell_thesis.png" width=1000 align=center>
-![](Images/single_cell_thesis.png)
+<!-- <img src="Images/single_cell_thesis.png" width=1000 align=center> -->
+![](./Images/single_cell_thesis.png)
 
 
 An example of how Hertzian forces between spherocylinders are represented is displayed below.
