@@ -103,10 +103,10 @@ The parameters are as follows:
 * out_dir_name is the directory to write the output files to
 * Kappa is the non-dim compression modulus (1 is sensible)
 * BendRig is the non-dim bending modulus (again, 1 is sensible! See phase diagram for how this affects morphology in 2D)
-* LinkingProb is the probability that daughter cells link together upon division
+* LinkingProb is the probability that daughter cells link together upon division (0-1).
 * ForceThresh is not currently implemented so any value is fine. This will be the force threshold above which chains can break.
-* AspectRatio is the final length of the cell at which it divides.
-* GrowthRate is the rate of linear growth of a cell.
+* AspectRatio is the final length of the cell at which it divides (3-5 is reasonable).
+* GrowthRate is the rate of linear growth of a cell (non-dim units: 2e-4 is a good choice)
 
 See my thesis for more details on exactly what these parameters do!
 
