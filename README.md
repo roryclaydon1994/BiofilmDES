@@ -27,7 +27,7 @@ An example of how Hertzian forces between spherocylinders are represented is dis
  <img src="Images/pair_interaction.png" width=500 align=left>
  <img src="Images/line_segment.png" width=1000 align=right>
 
-***
+<div style="page-break-after: always"></div>
 
 ## More code details
 Euler method with basic updating currently used for simplicity but higher order methods will be implemented later. The collision detection is based on finding the distance betweeen line segments in 3D from [4,5] and computing the Hertzian interaction as in [1] based on this overlap.
