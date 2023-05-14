@@ -26,19 +26,16 @@ The biofilm component of the code is strongly based on ref. [1]. The dynamics ar
 
 The 3D implementation of the rods and parameterisation used for evaluating where the closest points on the line segments are is shown below.
 
-<!-- <img src="Images/single_cell_thesis.png" width=1000 align=center> -->
-![](./Images/single_cell_thesis.png  | width=1000)
+<img src="Images/single_cell_thesis.png" width=1000 align=center>
 
 
 An example of how Hertzian forces between spherocylinders are represented is displayed below.
 
-<!-- <img src="Images/pair_interaction.png" width=500 align=center> -->
-![](Images/pair_interaction.png | width=1000)
+<img src="Images/pair_interaction.png" width=500 align=center>
 
 The method of applying the interaction between rods is based on two elastic spheres is demonstrated. The implementation of parallel interactions is shown below, but this is likely to be updated in the future!
 
- <!-- <img src="Images/line_segment.png" width=1000 align=center> -->
- ![](Images/line_segment.png | width=1000)
+ <img src="Images/line_segment.png" width=1000 align=center>
 
 <div style="page-break-after: always"></div>
 
@@ -49,28 +46,24 @@ At the moment, I use a uniform grid to create linked cell lists (giving $\mathca
 
 Upon division, there is a chance given by the linking probability that cells will be connected by an elastic rod. This is currently drawn from a uniform distribution. The elastic rod has a bending modulus, $B$, and a compression modulus, $K$. To account for bending stiffness, there are two elements locked into the poles of the bacteria, moved inside so as not to inadvertently get caught in two bacteria overlapping. The figure below shows the set up.
 
-<!-- <p align="center">
+<p align="center">
  <img src="Images/coupled_ecoli_bending_potential_zoom_mod.png" width=750 align=below>
-</p> -->
-![](Images/coupled_ecoli_bending_potential_zoom_mod.png | width=1000)
+</p>
 
 ## Example output
 ### 3D
 The image below is one giant chain.
 
-<!-- <p align="center">
+<p align="center">
  <img src="Images/vis_biofilm_00601_3D.png" width=1000 align=below>
-</p> -->
-![](Images/vis_biofilm_00601_3D.png | width=1000)
+</p>
 
 ### 2D
 My thesis primarily focussed on the effect of increaing the chaining probability from 0 to 1 and the effect on the colony morphology as a result of this. The following is the morphology phase diagram as a function of linking probability, $p_\ell$ and bending modulus, $\beta$ ($\beta$ is the non-dimensional $B$).
 
-<!-- <p align="center">
+<p align="center">
  <img src="Images/morphology_phage_diagram.png" width=1000 align=below>
-</p> -->
-
-![](Images/morphology_phage_diagram.png | width=1000)
+</p>
 
 ## Documentation
 The ```Doxygen``` folder contains a ```doxyconfig.conf``` file which should automatically generate documentation for this code. In the event you do not have Doxygen, I have included the generated file ```Doxygen/html/index.html```. This should open with all browsers and will display the list of files, classes, functions etc., with notes on what they do and how to use them.
