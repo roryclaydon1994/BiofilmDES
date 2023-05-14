@@ -9,6 +9,8 @@
 
 # BiofilmDES
 
+*Still under construction! Check back soon for the latest details :)*
+
 ## Introduction
 
 This repo contains a simulation framework for a discrete element simulation of a bacterial colony and bacteriophage (phage). The susceptible bacteria are represented as rod shaped bacterium such as Escherichia coli and the phage are based on tailed phage such as T4, although in the simulations this are currently point particles for simplicity. Spherical bacteria may also be included.
@@ -70,40 +72,46 @@ The ```Doxygen``` folder contains a ```doxygen.conf``` file which should automat
 
 Firstly, clone this repo using
 
-```git clone git@github.com:roryclaydon1994/BiofilmDES.git```
+`git clone git@github.com:roryclaydon1994/BiofilmDES.git`
 
 This package uses CMake (v >= 2.8) for compilation and assumes g++ 9.3.0 or above. Tested with cmake version 3.23.0 and g++ 11.3.0 on Ubuntu 20. The instructions here rely on familiarity with terminal.
 
-Building within the source directory will be blocked. To begin, navigate to the ```Simulation``` folder and create a folder called ```build``` here.
+Building within the source directory will be blocked. To begin, navigate to the `Simulation` folder and create a folder called `build` here.
 From terminal, in the project root we would write
 
-```cd Simulation && mkdir build && cd build```
+`cd Simulation && mkdir build && cd build`
 
 From here, we can compile the project without polluting our source directory. We generate the MakeFiles using cmake:
 
-```cmake ..```
+`cmake ..`
 
 This will use the top level CMakeLists.txt from the Simulation folder, which calls the CMakeLists.txts in the sub folders recursively.
 
 If this is successful, we should be able to compile the simulation executable using make. To do this, run
 
-```make -j n```
+`make -j n`
 
 where n is an integer representing the number of threads to compile with.
 
 If successful, the project directory tree will be recreated in build, with the compiled objects mapped on to this tree. The executable can now be found in ```build/Main```. As we should still be in build, this can be run using
 
-```./Main/```
+`./Main/main.out ${out_dir_name} $Kappa $BendRig $LinkingProb $ForceThresh $AspectRatio $GrowthRate`
 
-To quickly build and make a binary, call `quickMake.sh` from within the `Simulation/` directory.
-This will create a build directory `Simulation/build/`, create a MakeFile with CMake, make the package, and run a simple test to verify if it works.
+Note, by default this will attempt to run with all available cores. See parallelisation section for more details.
 
-To do this manually repeat the steps in `quickMake.sh`.
-A discrete build directory is highly recommended when using CMake and is encouraged.
+The parameters are as follows:
+* out_dir_name is the directory to write the output files to
+* Kappa is the non-dim compression modulus (1 is sensible)
+* BendRig is the non-dim bending modulus (again, 1 is sensible! See phase diagram for how this affects morphology in 2D)
+* LinkingProb is the probability that daughter cells link together upon division
+* ForceThresh is not currently implemented so any value is fine. This will be the force threshold above which chains can break.
+* AspectRatio is the final length of the cell at which it divides.
+* GrowthRate is the rate of linear growth of a cell.
 
-The code shouldn't take any command line arguments, but legacy instructions are as follows:
-Where the command line inputs are in the order log_file_index, spring_constant and linking_probability.
-This is likely to change shortly to include the bending stiffness.  
+See my thesis for more details on exactly what these parameters do!
+
+As many of these steps are routine, there is a `quickMake.sh` from within the `Simulation/` directory.
+This will create a build directory `Simulation/build/`, create a MakeFile with CMake, make the package, and run a simple test to verify it worked!
 
 <!-- ## Files
 
@@ -135,6 +143,14 @@ I've been using ```ffmpeg``` in ```bash``` to make movies by stitching together 
 <p align="center">
  <img src="vis_biofilm_00601_2D.png" width=750 align=below>
 </p> -->
+
+## Parallelisation
+
+Force calculations are parallelised using OpenMP, although this has not really been tested for performance. I intend to add a switch to a more efficient serial implementation, OpenMP parallelisation, MPI parallelisation and a GPU implementation.
+
+All on the way!
+
+*Still writing :)*
 
 ## References
 
