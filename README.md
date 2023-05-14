@@ -10,15 +10,22 @@
 # BiofilmDES
 
 ## Introduction
-This work comprises of a discrete element simulation of a biofilm and bacteriophage (phage). The susceptible bacteria are represented as rod shaped bacterium such as Escherichia coli and the phage are modelled as tailed phage such as T4. This was recently updated to also include spherical bacteria. The biofilm component of the code is strongly based on ref. [1]. The dynamics are assumed to be overdamped due to the low Reynold number environment and interactions between bacterium are based on Hertzian contact forces.
 
-The code extends previous work to include novel features, such as elastic links between dividing bacterium in order in an attempt to recreate the interesting intra-colony channels seen in [2,3]. This is the first main goal of the project. Work before in [3] used growing, flexible, elastic rods to achieve qualitatively similar patterns seen in chaining E. coli and B. subtilis. Reproducing such an effect in a discrete element simulation should be enough of a minimal model to determine if the only reqirement is the additional elastic link.
+This repo contains a simulation framework for a discrete element simulation of a bacterial colony and bacteriophage (phage). The susceptible bacteria are represented as rod shaped bacterium such as Escherichia coli and the phage are based on tailed phage such as T4, although in the simulations this are currently point particles for simplicity. Spherical bacteria may also be included.
 
-The second important aspect is to include the presence and effect of phage. Hopefully, spontaneous channel formation will provide an interesting topology for the phage to infect.
+The biofilm component of the code is strongly based on ref. [1]. The dynamics are assumed to be overdamped due to the low Reynold number environment and interactions between bacterium are based on Hertzian contact forces. The code extends previous work to include novel features, such as elastic links between dividing bacterium. This allows for simulations of chaining bacterial colonies, and also allows us to interpolate between non-chaining and fully chaining colonies. I discuss many aspects of altering the chaining interaction in detail in my thesis, but for general users, the take home is that simple changes to cell-cell interactions can have quite profound influences on the evolution of the colony.
 
- <img src="Images/pair_interaction.png" width=500 align=right>
+<!-- Work before in [3] used growing, flexible, elastic rods to achieve qualitatively similar patterns seen in chaining Escherichia coli and Bacillus subtilis.  -->
 
-An example of how Hertzian forces between spherocylinders are represented is displayed on the right. This is the 2D projection with the extension to 3D straightforward. Parallel interactions take the center of the spherocylinders at the midpoint of the overlap, although this can be removed with no noticeable effect on the output in some preliminary tests.
+
+<!-- The second important aspect is to include the presence and effect of phage. Hopefully, spontaneous channel formation will provide an interesting topology for the phage to infect. -->
+
+## Rod shaped interactions
+
+An example of how Hertzian forces between spherocylinders are represented is displayed below. On the right, the method of applying the interaction between rods based on two elastic spheres is demonstrated. On the right, the implementation of parallel interactions is shown. This interaction is likely to be updated in the future!
+
+ <img src="Images/pair_interaction.png" width=500 align=left>
+ <img src="Images/line_segment.png" width=500 align=right>
 
 ## More code details
 Euler method with basic updating currently used for simplicity but higher order methods will be implemented later. The collision detection is based on finding the distance betweeen line segments in 3D from [4,5] and computing the Hertzian interaction as in [1] based on this overlap.
