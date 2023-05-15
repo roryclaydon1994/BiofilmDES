@@ -60,13 +60,11 @@ My thesis primarily focussed on the effect of increaing the chaining probability
  <img src="Images/morphology_phage_diagram.png" width=1000 align=below>
 </p>
 
-#### Movies
+#### Example Movies
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Na-92NM0m8g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/cl7EsdQp2uo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/v4z7DXk9c0M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+* https://www.youtube.com/embed/Na-92NM0m8g
+* https://www.youtube.com/embed/cl7EsdQp2uo
+* https://www.youtube.com/embed/v4z7DXk9c0M
 
 ## Documentation
 The ```Doxygen``` folder contains a ```doxyconfig.conf``` file which should automatically generate documentation for this code. In the event you do not have Doxygen, I have included the generated file ```Doxygen/html/index.html```. This should open with all browsers and will display the list of files, classes, functions etc., with notes on what they do and how to use them.
