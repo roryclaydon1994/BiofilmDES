@@ -17,16 +17,11 @@ This repo contains a simulation framework for a discrete element simulation of a
 
 The biofilm component of the code is strongly based on ref. [1]. The dynamics are assumed to be overdamped due to the low Reynold number environment and interactions between bacterium are based on Hertzian contact forces. The code extends previous work to include novel features, such as elastic links between dividing bacterium. This allows for simulations of chaining bacterial colonies, and also allows us to interpolate between non-chaining and fully chaining colonies. I discuss many aspects of altering the chaining interaction in detail in my thesis, but for general users, the take home is that simple changes to cell-cell interactions can have quite profound influences on the evolution of the colony.
 
-<!-- Work before in [3] used growing, flexible, elastic rods to achieve qualitatively similar patterns seen in chaining Escherichia coli and Bacillus subtilis.  -->
-
-
-<!-- The second important aspect is to include the presence and effect of phage. Hopefully, spontaneous channel formation will provide an interesting topology for the phage to infect. -->
-
 ## Rod shaped interactions
 
 The 3D implementation of the rods and parameterisation used for evaluating where the closest points on the line segments are is shown below.
 
-<img src="Images/single_cell_thesis.png" width=1000 align=center style="background-color:#33475b">
+<img src="Images/single_cell_thesis.png" width=1000 align=center>
 
 
 An example of how Hertzian forces between spherocylinders are represented is displayed below.
@@ -64,6 +59,14 @@ My thesis primarily focussed on the effect of increaing the chaining probability
 <p align="center">
  <img src="Images/morphology_phage_diagram.png" width=1000 align=below>
 </p>
+
+#### Movies
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Na-92NM0m8g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/cl7EsdQp2uo" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/v4z7DXk9c0M" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Documentation
 The ```Doxygen``` folder contains a ```doxyconfig.conf``` file which should automatically generate documentation for this code. In the event you do not have Doxygen, I have included the generated file ```Doxygen/html/index.html```. This should open with all browsers and will display the list of files, classes, functions etc., with notes on what they do and how to use them.
