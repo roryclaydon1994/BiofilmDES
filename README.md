@@ -187,6 +187,12 @@ The initial conditions are set by the line
 `std::vector<IBacterium> initial_conditions;`
 in this function. RodShaped bacteria, SphericalBacteria and other user defined bacteria can be added to this vector.
 
+### Updating control flow
+The main loop of the program is in the PolyBiofilm class's runSim method. Some basic set up is done in this classes constructor, but the overall dynamics can be seen in the runSim method.
+
+## Refactor work
+At present, I have used far too many MACROS to alter the control flow of the simulations. Ideally, this could be refactored to allow a biofilm class to be built by composition instead. Check back later once I have decided how to do this!
+
 ## References
 
 1. [Mechanically driven growth of quasi-two dimensional microbial colonies,\

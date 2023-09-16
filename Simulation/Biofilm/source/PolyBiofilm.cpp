@@ -10,7 +10,6 @@
 #include <memory>
 #include <numeric>
 #include <filesystem>
-// //#include <execution>
 
 // Custom classes
 #include "constants.hpp"         // definition of constants namespace
@@ -104,7 +103,6 @@ void PolyBiofilm::createLogFile()
 void PolyBiofilm::updateOneTimeStep(bool &update_neighbours, uint &verlet_counter)
 {
   // ---------------------- Grow and divide cells ------------------------------
-  // std::cout << "tries to divide " << mCells.size() << '\n';
   for ( int ii=mCells.size()-1; ii>=0; --ii )
   {
 #ifdef PHAGE
@@ -114,13 +112,10 @@ void PolyBiofilm::updateOneTimeStep(bool &update_neighbours, uint &verlet_counte
       mCells[ii]->grow(mDt);
       if ( mCells[ii]->signalDivide() )
       {
-        // std::cout << "attempts division" << '\n';
         mCells[ii]->divide(mCells);
-        // std::cout << "completes division" << '\n';
 
         // Any division will require a re-binning of the cells
         update_neighbours=true;
-        // std::cout << "Binning: division" << '\n';
       }
     }
   }
@@ -129,7 +124,6 @@ void PolyBiofilm::updateOneTimeStep(bool &update_neighbours, uint &verlet_counte
   // cell lists need to be updated
   if ( update_neighbours )
   {
-    // std::cout << "updating nieghbour list " << mCells.size() << '\n';
     mGrid.updateVerletList(mCells);
     verlet_counter=0;
     update_neighbours=false;
@@ -140,7 +134,6 @@ void PolyBiofilm::updateOneTimeStep(bool &update_neighbours, uint &verlet_counte
   createSpringLinks(mCells);
 #endif
 
-  // std::cout << "interacts cells: " << mCells.size() << '\n';
   // Update the force and torque for each cell to the current time
   polyInteractParticles(mCells);
 
@@ -149,22 +142,14 @@ void PolyBiofilm::updateOneTimeStep(bool &update_neighbours, uint &verlet_counte
   removeSpringLinks(mCells);
 #endif
 
-  // std::cout << "enters update" << '\n';
-  // std::cout << "move and grow" << '\n';
   for ( auto &cell : mCells )
   {
-    // std::cout << cell->getID()     << " "
-    //           << cell->getMyType() << " "
-    //           << cell->getPos()    << " "
-    //           << cell->getRadius()
-    //           << '\n';
     cell->move(mDt);
     double moved {
       dot2( cell->getLoggedPos()-cell->getPos() )
     };
     if ( moved>dot2( mGrid.mVerletMoveR ) )
     {
-      // std::cout << "Binning: moved too far" << '\n';
       update_neighbours=true;
     }
     cell->reset();
@@ -174,15 +159,8 @@ void PolyBiofilm::updateOneTimeStep(bool &update_neighbours, uint &verlet_counte
   // Add the phage interaction here
   // phage at their current positions attempt to infect the bacteria
   // move remining phage
-  // std::cout << "\n 1 phage infections" << '\n';
   attemptInfections(mCells,mPhage,mGrid);
-  // std::cout << "\n 2 phage infections" << '\n';
-
-  // std::cout << "\n 1 move phage" << '\n';
   for ( auto phage : mPhage ) { phage->move(mDt); }
-  // std::cout << "\n 2 move phage" << '\n';
-
-  // std::cout << "\n 1 lyse cells" << '\n';
   mNumberOfInfected=0;
   for ( int ii=mCells.size()-1; ii>=0; --ii )
   {
@@ -192,16 +170,13 @@ void PolyBiofilm::updateOneTimeStep(bool &update_neighbours, uint &verlet_counte
       mCells[ii]->updateTimeSinceInfection(mDt);
       if ( mCells[ii]->signalLysis() )
       {
-        // std::cout << "lysing cell " << mCells.size() << '\n';
         lyseCell(mCells[ii],mPhage);   // Create phage uniformly over lysed cell
         delete mCells[ii];
         mCells.erase(mCells.begin()+ii);  // Remove the dead cell
-        // std::cout << "now " << mCells.size() << '\n';
         update_neighbours=true;
       }
     }
   }
-  // std::cout << "\n 2 lyse cells" << '\n';
 #endif
 
 #if defined(AG43) && !defined(NDEBUG)
@@ -231,18 +206,6 @@ void PolyBiofilm::runSim()
     if ( tt%mOutFreq==0 )
     {
       updateStatus(output_counter,num_outputs);
-      // std::cout << "\n=================" << '\n';
-      // for ( auto &cc : mCells )
-      // {
-      //   std::cout << " === Cell " << cc->getID() << " ===" << '\n';
-      //   for ( auto &spring : cc->getSprings() )
-      //   {
-      //     auto& [key,ss] = spring;
-      //     std::cout << "-> " << ss.mCellB->getID()
-      //               << " s: " << ss.mS << " t: " << ss.mT
-      //               << " key: " << key << '\n';
-      //   }
-      // }
 
       //Output to file
       printCellsToFile(
@@ -265,13 +228,11 @@ void PolyBiofilm::runSim()
       {
         break;
       }
-
     }
 
     // refresh list if every N timesteps
     if ( verlet_counter>=mGrid.mVerletUptime )
     {
-      // std::cout << "Binning: verlet_counter>=mGrid.mVerletUptime" << '\n';
       update_neighbours=true;
     }
     else ++verlet_counter;
@@ -282,23 +243,8 @@ void PolyBiofilm::runSim()
     if ( tt*mDt*constants::baseTimeScale>0 && released_phage==false )
     {
       std::cout << "Release phage" << '\n';
-      // const int num_phg { 40 };
-      // for (int ii=0;ii<num_phg;++ii)
-      //   mPhage.push_back(
-      //     new Phage(
-      //       0.5*constants::max_grid_size*gen_rand.getUniformRand(-1.0,1.0),
-      //       0.5*constants::max_grid_size*gen_rand.getUniformRand(-1.0,1.0),
-      //       0.1*constants::max_grid_size
-      //     )
-      //   );
       mPhage.push_back( new Phage(0,0,0) );
       released_phage=true;
-      // for ( auto pp : mPhage )
-      // {
-      //   std::cout << pp->getID() << " "
-      //             << 2*pp->getPos()/constants::max_grid_size << '\n';
-      // }
-      // exit(1);
     }
     if ( mNumberOfInfected==mCells.size() || mCells.size()==0 )
     {
