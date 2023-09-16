@@ -71,7 +71,6 @@
 #include "MathUtility.hpp"      // definition of Vec3 class
 #include "RandUtil.hpp"
 #include "IO.hpp"
-#include "IndexGrid.hpp"
 #include "HyperParams.hpp"
 
 inline void pairCollision( IBacterium *A, const IBacterium *B );

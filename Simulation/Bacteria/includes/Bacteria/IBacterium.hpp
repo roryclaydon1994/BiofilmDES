@@ -55,22 +55,11 @@ public:
   virtual uint   getBurstSize() const=0;
   virtual uint   getMOI()       const=0;
 #endif
-  // virtual double getMass() const=0;
-  // virtual double getInertia() const=0;
-  // virtual double getDaughterTheta()=0;
-  // virtual double getDaughterAlpha()=0;
-  // virtual double getDaughterGrowthRate()=0;
-  //
-  // virtual void update()=0;
   virtual void move(double)=0;
   virtual void grow(double)=0;
   virtual void reset()=0;
   virtual void divide(std::vector<IBacterium*>& cell_list)=0;
-  //
   virtual bool signalDivide()=0;
-  //
-  // virtual void reset()=0;
-  // virtual double getCellArea()=0;
   virtual Vec3 getOrientation() const=0;
   virtual void getMyEndVecs(Vec3&,Vec3&) const=0;
   virtual double getEffectiveR() const=0;
@@ -101,7 +90,6 @@ inline double getEffectiveQ(const double a, const double b)
 }
 
 #ifdef AG43
-// TODO this
 class Springs
 {
 public:

@@ -3,6 +3,7 @@
 
 // Standard libraries
 #include <memory>
+#include <vector>
 
 template < class S >
 void printCellsToFile(

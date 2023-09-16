@@ -66,9 +66,7 @@
 #include "constants.hpp" // definition of constants namespace
 #include "MathUtility.hpp"
 #include "Geometry.hpp"
-// #include "particle.hpp"
 #include "IBacterium.hpp"
-// #include "Springs.hpp"
 
 /*----------------------------------------------------------------------------*/
 /*
@@ -138,7 +136,6 @@ public:
 #elif defined( AG43 )
   static double mKappa;              //!< Spring tension
   static double mForceThresh;        //!< Threshold force before breaking
-  // std::vector<IBacterium*> mStuckTo; //!< Springs connect these cells
   SpringHash mSprings; //!< Springs
   virtual SpringHash& getSprings() override
   {
@@ -196,9 +193,6 @@ public:
   }
   virtual void setVel() override
   {
-    // const double effective_length_3{ mRadius*mRadius*( mRadius + 0.75*mLength ) };
-    // const double effective_length{ pow(effective_length_3,(1.0/3.0)) };
-    // mVel=mForce/effective_length;
     mVel=mForce/mLength;
   }
 
@@ -305,15 +299,6 @@ public:
 
   /*--------------------- Specific cell abilities ----------------------------*/
 
-  // double consumeNutrients(double c = constants::conc_max,
-  //                         double c_half = constants::c_sat);
-  /**<
-  \brief Find the rate bacteria consume the local nutrients
-  @param[in] c: local concentration of nutrients
-  @param[in] c_half: half-saturation of the Monod function
-  @returns rate of nutrient consumption
-  */
-
   virtual void grow(double dt) override;
   /**<
   \brief Grow the bacteria based on a constant nutrient density. This is grows bacteria
@@ -321,18 +306,6 @@ public:
   @param[in] dt: simulation timestep
   @param[out] mLength of the bacteria is increased according to growth rate
   @returns Void.
-  */
-
-  // void grow(double c = constants::conc_max, double dt = 0.5e-4);
-  /*
-  Grow the bacteria based on the local nutrient availability. This has the effect
-  of increasing mLength as in [1]. This expression also accounts for the
-  local nutrient uptake of different sizes of bacteria.
-  Parameters:
-    c: local concentration of nutrients
-    dt: simulation timestep
-    Effect:
-      Updates mLength of the bacteria
   */
 
   virtual bool signalDivide() override
@@ -346,24 +319,6 @@ public:
 
   virtual void divide(std::vector<IBacterium*>& cell_list) override;
 
-  // double getDaughterTheta();
-  /**<
-  \brief Get the orientation of the daughter cell in the plane
-  @returns theta: mother theta plus a small kick due to fluctations
-  */
-
-  // double getDaughterAlpha();
-  /**<
-  \brief Get the orientation of the daughter cell along z
-  @returns alpha: mother alpha plus a small kick due to fluctations
-  */
-
-  // double getDaughterGrowthRate();
-  /**<
-  \brief Get the growth rate of the daughter cell
-  @returns grwth_rate: uniformly distributed growth rate in the range 0.5-1.5 of average
-  */
-
   virtual void move(double dt) override;
   /**<
   \brief Move the RodShapedBacterium according to Newtonian dynamics.
@@ -371,9 +326,6 @@ public:
   @param[out] mPos: translated according to forces on this particle
   @param[out] theta,alpha: rotated according to torques on this particle
   */
-
-  // void setRCMVelFromForce();
-  // void setRCMAngVelFromTorque();
 
   void reset() override;      // Zero any dynamical quantity
 
@@ -461,32 +413,6 @@ public:
   }
 };
 
-// double getDaughterAngle(double angle);
-/**<
-  slightly perturb input angle to give quasi-spherical shape
-  Parameters:
-    angle: the mother's angle
-  Returns:
-    daughters perturbed angle
-*/
-
-
-// void createDaughters(
-//   uint ii,
-//   std::vector<RodShapedBacterium> &cell_list
-// );
-
-// RodShapedBacterium::cellpair createDaughters(RodShapedBacterium &mother_cell);
-// void createDaughters(RodShapedBacterium &mother_cell,
-//                      std::vector<RodShapedBacterium> &daughter_cells);
-/**<
- Create two daughter cells with slightly perturbed orientation and growth rate
- compared to the mother. The daughters' centres are placed at rcm +/- 0.25*(L+d)
- with length (L-d)/2
- Effect:
-   Emplaces two daughter cells at the end of the passed daughter_cells vector
-*/
-
 void getEndVecs(const RodShapedBacterium &cell, Vec3 &p, Vec3 &q);
 /**<
   Find the two end point vectors of a RodShapedBacterium
@@ -512,6 +438,8 @@ void printInteraction(std::ostream &out, const RodShapedBacterium &cell,
 void initialiseRodParameters(double aspect_ratio, double growth_rate);
 /**<
  * Set the hyper parameters for the general rod shaped bacterium class
+ * param aspect_ratio: maximum aspect ratio the rod shaped bacterium grows to
+ * param growth_rate: linear growth rate of the bacterium
  */
 
 #ifdef ADHESION
@@ -535,8 +463,12 @@ void initialiseChainingParameters(
   double force_thresh
 );
 /**<
-  Check the hyperameters for chaining bacteria are suitable and set the
+  @ brief Check the hyperameters for chaining bacteria are suitable and set the
   associated static variables.
+  param kappa: Elastic modulus of the spring between the bacteria
+  param bend_rig: Bending modulus of the spring
+  param linking_prob: Chance daughters link together upon division
+  param force_thresh: If forces exceed this threshold, the spring will snap
 */
 #endif
 

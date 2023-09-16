@@ -152,9 +152,6 @@ public:
   {
     std::cout << "Error in spherical bacteria get springs" << '\n';
     exit(12);
-    // std::vector<Springs> v;
-    // v.emplace_back(nullptr,nullptr,0,0);
-    // return v;
   }
 #endif
 
@@ -220,8 +217,6 @@ public:
   virtual void setAngVel() override
   {
     mAngVel=(4.0/3.0)*mTorque/pow(mRadius,3);
-    // std::cout << "exit spherical bacteria hpp" << '\n';
-    // exit(1);
   }
 
   /* -------------------------- Cell Linked List -----------------------------*/
