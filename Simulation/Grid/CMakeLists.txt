@@ -1,31 +1,7 @@
 cmake_minimum_required (VERSION 3.16)
 
-### Require out-of-source builds
-file(TO_CMAKE_PATH "${PROJECT_BINARY_DIR}/CMakeLists.txt" LOC_PATH)
-if(EXISTS "${LOC_PATH}")
-    message(FATAL_ERROR
-    "You cannot build in a source directory (or any directory with a CMakeLists.txt file).
-    Please make a build subdirectory.
-    Feel free to remove CMakeCache.txt and CMakeFiles.")
-endif()
-
-# set the project name and version
-if (CMAKE_VERSION VERSION_LESS 3.0)
-  # cmake_policy(SET CMP0048 OLD)
-  project (Grid )
-  # message("Try to include Grid")
-else()
-  cmake_policy(SET CMP0048 NEW)
-  project (Grid LANGUAGES CXX VERSION 1.0)
-  add_library(
-    Grid
-    INTERFACE
-  )
-  target_include_directories(Grid INTERFACE includes/Grid)
-endif()
-
-# specify the C++ standard
-#set(CMAKE_CXX_STANDARD 20)
-#set(CMAKE_CXX_STANDARD_REQUIRED True)
-
-#target_link_libraries(Grid PRIVATE MathUtility Particle Bacteria Phage tbb)
+add_library(
+  Grid
+  INTERFACE
+)
+target_include_directories(Grid INTERFACE includes/Grid)

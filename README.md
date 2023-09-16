@@ -153,6 +153,29 @@ All on the way!
 
 *Still writing :)*
 
+## Simulation MACROS
+The main suggested macros to define in the project root CMakeLists.txt are:
+* CHAINING: turn on adhesive chains at division - used to simulate Bacillus subtilis
+* RANDOM_SEED: If defined, each run will be different. For debugging, turn this off for reproducible runs.
+* DEBUG_CHAINING: more verbose output relating to chaining. 
+* PHAGE: Turn on phage dynamics - needs more testing but in principle will work.
+* MOVE_3D: Turn on 3D dynamics
+
+These can be set with the SIM_DEFs parameter in the CMakeLists.txt file e.g.
+set(SIM_DEFS "-D CHAINING -D RANDOM_SEED")
+string(APPEND SIM_DEFS  " -fopenmp ")
+
+The final append to `-fopenmp` is required to link to the OpenMP libraries if parallelisation is desired. As mentioned above, this needs to be properly optimised after serial optimisations have been implemented.
+
+## Optimisations
+
+### Verlet list updates
+There are two possible optimisations here. 
+
+The Verlet neighbour lists are created by determining if neighbours in the adjacent grid cell are within a specified range. For serial execution, all neighbouring grid cells, and bacteria within those cells tested if they meet this requirement. For parallel execution, this is necessary due to asynchronous updates, however, for serial execution only half of these grid cells need to be checked.
+
+Secondly, any division triggers a rebinning of all Verlet lists, which could be wasteful at high cell numbers. This could potentially be optimised by checking which cells have the mother as a neighbour only updating the affected cells.
+
 ## References
 
 1. [Mechanically driven growth of quasi-two dimensional microbial colonies,\
