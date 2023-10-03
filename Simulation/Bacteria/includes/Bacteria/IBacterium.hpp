@@ -4,17 +4,7 @@
 // Standard modules
 #include <iostream>
 
-// Custom modules
-// #include "Springs.hpp"
-
-/*!
-  Test
-*/
 #include <unordered_map>
-#ifdef AG43
-  class Springs;
-  using SpringHash = std::unordered_map<uint, Springs>;
-#endif
 
 class IBacterium
 {
@@ -39,22 +29,6 @@ public:
   virtual void setLowerLink(IBacterium*)=0;
 #endif
 
-#ifdef AG43
-  virtual SpringHash& getSprings()=0;
-#endif
-
-#ifdef PHAGE
-  virtual bool signalLysis() const=0;
-  virtual void updateTimeSinceInfection(double)=0;
-  virtual void setInfected()=0;
-  virtual bool isInfected()=0;
-  virtual void setLysisTime(double)=0;
-  virtual void setBurstSize(uint)=0;
-  virtual void updateMOI()=0;
-  virtual double getLysisTime() const=0;
-  virtual uint   getBurstSize() const=0;
-  virtual uint   getMOI()       const=0;
-#endif
   virtual void move(double)=0;
   virtual void grow(double)=0;
   virtual void reset()=0;
@@ -88,22 +62,5 @@ inline double getEffectiveQ(const double a, const double b)
 {
   return ( a * b ) / ( a + b );
 }
-
-#ifdef AG43
-class Springs
-{
-public:
-  IBacterium *mCellA,*mCellB; //!< Cells this spring connects
-  double mS,mT;               //!< Location (parameter) on cells spring connects
-  Vec3 mOriLink;    //!< Direction of spring link when the link formed
-  bool mRemove { false };     //!< Signal this spring should disconnect
-
-  Springs (IBacterium* cellA, IBacterium* cellB, double s, double t, Vec3 ori) :
-  mCellA{cellA}, mCellB{cellB}, mS{s}, mT{t}, mOriLink{ori}
-  {
-    assert(isclose(ori.norm(),1));
-  }
-};
-#endif
 
 #endif //End fileguard

@@ -89,9 +89,6 @@ void polyInteractParticles( std::vector<IBacterium*> &pars )
         pairCollision(cell,neighbour_cell);
       }
     }
-#ifdef AG43
-    computeAg43Force(cell);
-#endif
 #ifdef CHAINING
     computeChainingInteractions(cell);
 #endif
@@ -105,84 +102,6 @@ void polyInteractParticles( std::vector<IBacterium*> &pars )
   return;
 }
 
-#ifdef AG43
-
-inline void computeAg43Force( IBacterium *cellA )
-{
-  for ( auto& spring : cellA->getSprings() )
-  {
-    // Unpack key (id linked to) and spring data
-    auto& [key,ss] = spring;
-
-    IBacterium* cellB { ss.mCellB };
-    Vec3 v1 { 0.5*cellA->getLength()*cellA->getOrientation() };
-    Vec3 v2 { 0.5*cellB->getLength()*cellB->getOrientation() };
-
-    // Find the virtual sphere centres
-    Vec3 ca { cellA->getPos()+ss.mS*v1 };
-    Vec3 cb { cellB->getPos()+ss.mT*v2 };
-
-    // Points on the surface
-    Vec3 pa { ca+cellA->getRadius()*ss.mOriLink }; // Point on surface A link
-    Vec3 pb { cb-cellB->getRadius()*ss.mOriLink }; // Point on surface B link
-
-    Vec3 x { pb-pa };                           // Spring extension
-    double projection { dot(ss.mOriLink,x) };   // extension projected in original direction
-    if ( projection<0 )
-      x-=projection*x;                          // If there is an overlap, cut out the normal force
-
-    // Update force and torque
-    Vec3 spring_force {
-      RodShapedBacterium::mKappa*x
-    };
-
-    Vec3 spring_torque { cross(pa-cellA->getPos(),spring_force) };
-    cellA->addForce(spring_force);
-    cellA->addTorque(spring_torque);
-
-    // If the force is too much then signal to remove the spring
-    if ( dot2(spring_force)>dot2(RodShapedBacterium::mForceThresh) )
-    {
-      // std::cout << "Signal remove: " << cellA->getID()
-      //           << " -- "            << cellB->getID() << '\n';
-      ss.mRemove=true;
-    }
-  }
-}
-#endif
-
-#ifdef ADHESION
-inline double computeAdhesionForceMag(
-  IBacterium *A, const IBacterium *B, double sep
-)
-{
-  double dep_force_mag{ 0.0 };
-  // Attractive part of the depletion interaction based on AO framework
-  if ( sep>constants::nondim_rodSpheroDiam && sep<=2*RodShapedBacterium::mRd )
-  {
-    const double ad_prefac {
-      RodShapedBacterium::mKappaDep*pow(RodShapedBacterium::mRd,2)
-    };
-
-    dep_force_mag = ad_prefac*( 1-dot2( sep/(2*RodShapedBacterium::mRd) ) );
-
-  }
-  else if ( sep>2*RodShapedBacterium::mRd && sep<=2*RodShapedBacterium::mRi )
-  {
-    const double ad_prefac {
-      RodShapedBacterium::mKappaDep*pow(RodShapedBacterium::mRd,2)
-    };
-
-    dep_force_mag = (
-      -RodShapedBacterium::mRepStrength*ad_prefac*
-      ( 1-sep/(2*RodShapedBacterium::mRd) )*
-      ( 1-sep/(2*RodShapedBacterium::mRi) )
-    );
-  }
-  return dep_force_mag;
-}
-#endif
-
 inline double computeHertzianForceMag(
   const IBacterium *A, const IBacterium *B, double sep
 )
@@ -191,17 +110,8 @@ inline double computeHertzianForceMag(
   double overlap { std::max(sigma-sep,0.0) }; // Cell overlap
   if ( overlap<=0 ) return 0.0;
 
-
-  //
   // // Hertzian force magnitude
-#ifdef POLY
-  // Reduced quantities for use in the Hertzian force calculation
-  double Dstar { getEffectiveQ(2*A->getRadius(),2*B->getRadius()) };
-  double Estar { getEffectiveQ(A->getModE(),B->getModE())   };
-  double force_mag { 2*Estar * overlap * sqrt(2*Dstar*overlap) };
-#else
   double force_mag { overlap*sqrt(overlap) };
-#endif
   return force_mag;
 }
 
@@ -258,34 +168,6 @@ inline void computeHertzianForceTorque(
   A->addTorque(torque);
 }
 
-// inline void pairCollision(IBacterium *A, const IBacterium *B)
-// {
-//
-//   double sep; // Separation between centers of the contact spheres
-//   Vec3 cA,cB; // Centers of the contact spheres
-//   Vec3 force, torque; // force and torque on cell A
-//   Vec3 force_pos; // contact point of this force on A
-//
-//   computeHertzianForceTorque(A,B,sep,cA,cB,force_pos,force,torque);
-//   A->addForce(force);
-//   A->addTorque(torque);
-//
-// #ifdef ADHESION
-//
-//   const double dep_force_mag { computeAdhesionForce(A,B,sep) };
-//   const Vec3 dep_force { -dep_force_mag*normal_BA };
-//
-//   A->addForce(dep_force);
-//   // Torque 0 is due to force of B on A
-//   // lever arm is vector from rod center to virt_sphere center on that rod
-//   // Take force at the centre of the virtual sphere
-//   const Vec3 dep_force_pos = cA;
-//   const Vec3 dep_torque = cross(dep_force_pos-A->getPos(),dep_force);
-//   A->addTorque(dep_torque);
-//
-// #endif
-// }
-
 inline void interactSurface(IBacterium *cell)
 {
   // agar lowest and highest possible values
@@ -304,7 +186,6 @@ inline void interactSurface(IBacterium *cell)
   };
 
   const int num_poles { 1 + ( dot2(poles[1]-poles[0])!=0 ) };
-  // std::cout << cell->getMyType() << " has num poles " << num_poles << '\n';
   for ( int ii=0; ii<num_poles; ++ii )
   {
     // Height of the agar at the poles indexed by 1,2
@@ -339,12 +220,8 @@ inline void interactInterface(
 }
 
 /* === Better parallel handling === */
-inline void pairCollision(IBacterium *A, const IBacterium *B)
+void pairCollision(IBacterium *A, const IBacterium *B)
 {
-#ifdef ADHESION
-  std::cout << "ADHESION not supported at present" << '\n';
-  exit(12);
-#endif
 
   double s1,t1,s2,t2; // Line parameter values at which they are closest
   Vec3 c1,c2;         // centres of the closet approach on each line resp.
@@ -384,7 +261,6 @@ inline double computeHertzianEnergyMag(
   double sep=cv.norm();
   assert(sep>0.1);
 
-  // double sigma { A->getRadius() + B->getRadius() };
   constexpr double sigma { 1.0 };
   double overlap { std::max(sigma-sep,0.0) }; // Cell overlap
   double energy { (2.0/5.0)*overlap*overlap*sqrt(overlap) };
@@ -394,10 +270,6 @@ inline double computeHertzianEnergyMag(
 /* === Better parallel handling === */
 double getPairHertzianEnergy(IBacterium *A, const IBacterium *B)
 {
-#ifdef ADHESION
-  std::cout << "ADHESION not supported at present" << '\n';
-  exit(12);
-#endif
 
   double energy { 0.0 }; // Energy due to an overlap
   double s1,t1,s2,t2;    // Line parameter values at which they are closest

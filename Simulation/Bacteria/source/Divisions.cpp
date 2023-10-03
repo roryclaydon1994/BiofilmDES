@@ -12,14 +12,12 @@
 #include "MathUtility.hpp"
 #include "RandUtil.hpp"
 #include "Geometry.hpp"
-// #include "particle.hpp"
 #include "IBacterium.hpp"
 #include "SphericalBacteria.hpp"
 #include "RodShapedBacteria.hpp"
 
 void SphericalBacterium::divide(std::vector<IBacterium*>& cell_list)
 {
-  // std::cout << "Divide Spherical" << '\n';
 
   // Proportion of the mother cell volume the first daughter receives
   const double alpha { gen_rand.getNormalRand(0.5,0.1) };
@@ -69,14 +67,6 @@ void SphericalBacterium::divide(std::vector<IBacterium*>& cell_list)
       cell2_radius
     }
   );
-  // std::cout << getID()     << " "
-  //           << getMyType() << " "
-  //           << getPos()
-  //           << '\n';
-  // std::cout << cell_list.back()->getID()     << " "
-  //           << cell_list.back()->getMyType() << " "
-  //           << cell_list.back()->getPos()
-  //           << '\n';
 }
 
 #ifdef CHAINING
@@ -96,9 +86,6 @@ void RodShapedBacterium::divide(std::vector<IBacterium*>& cell_list)
   // Save the mother links for the daughters to inherit
   IBacterium* mother_upper_link { mUpperEndLinkedTo };
   IBacterium* mother_lower_link { mLowerEndLinkedTo };
-#elif defined(AG43)
-  SpringHash mother_springs { getSprings() };
-  uint mother_id { mId };
 #endif
 
   // Find the rcm of the daughter_cells
@@ -185,76 +172,4 @@ void RodShapedBacterium::divide(std::vector<IBacterium*>& cell_list)
   }
 #endif // End chaining
 
-#if defined(AG43)
-
-  // Go through all the springs connected to the mother and reattach to the daughters
-  IBacterium* other_daughter { cell_list.back() };
-  IBacterium* new_spring_link { nullptr };
-  for ( auto &spring : mother_springs )
-  {
-    auto& [key,ss] = spring;
-    // std::cout << "key: " << key
-    //           << " spr: " << ss.mCellA->getID()
-    //           << " -- " << ss.mCellB->getID() << '\n';
-    double map_s { 0.0 };
-    if (ss.mS>0)
-    {
-      map_s = -1 + 2*ss.mS;
-      mSprings.insert(
-        std::make_pair<uint,Springs>(
-          ss.mCellB->getID(),
-          Springs { this,ss.mCellB,map_s,ss.mT,ss.mOriLink }
-        )
-      );
-      new_spring_link = this;
-    }
-    else if (ss.mS<0)
-    {
-      map_s = 1 + 2*ss.mS;
-      other_daughter->getSprings().insert(
-        std::make_pair<uint,Springs>(
-          ss.mCellB->getID(),
-          Springs { other_daughter,ss.mCellB,map_s,ss.mT,ss.mOriLink }
-        )
-      );
-      new_spring_link = other_daughter;
-    }
-    else
-    {
-      std::cout << "Error, the connection is at s=0" << '\n';
-      exit(45);
-    }
-
-    // Get the springs attached from cellB attached to this cell
-    auto& other_springs { ss.mCellB->getSprings() };
-
-    // Get the spring which would have been connected to the mother
-    assert( other_springs.contains(mother_id) );
-    auto nh = other_springs.extract(mother_id); // Use node handler
-
-    // Update the key with the id of the new cell to which this is connected
-    nh.key() = new_spring_link->getID();
-    other_springs.insert(std::move(nh));
-
-    auto spr_it { other_springs.find(new_spring_link->getID()) };
-    spr_it->second.mCellB = new_spring_link;
-    spr_it->second.mT = map_s;
-
-    // for ( auto& val : other_springs )
-    // {
-    //   auto& [key,sp] = val;
-    //   std::cout << sp.mCellA->getID() << " <---> " << sp.mCellB->getID() << '\n';
-    // }
-  }
-#endif // End ag43
-  // std::cout << " ID"    << getID()
-  //           << " type " << getMyType()
-  //           << " pos "  << getPos()
-  //           << " ori "  << getOrientation()
-  //           << '\n';
-  // std::cout << " ID"    << cell_list.back()->getID()
-  //           << " type " << cell_list.back()->getMyType()
-  //           << " pos "  << cell_list.back()->getPos()
-  //           << " ori "  << cell_list.back()->getOrientation()
-  //           << '\n';
 }

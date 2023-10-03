@@ -28,11 +28,6 @@ Vec2& Vec2::operator*= (const double v1)
 
 Vec2 operator+(const Vec2 &v1, const Vec2 &v2)
 {
-  // Vec2 result;
-  // for(int ii = 0; ii < 3; ++ii)
-  // {
-  //   result[ii] = v1[ii] + v2[ii];
-  // }
   return
   {
     v1.x + v2.x,
@@ -65,7 +60,6 @@ Vec2 operator*(const double scal, const Vec2 &v1)
 
 Vec2 operator/(const Vec2 &v1, const double scal)
 {
-  // assert(scal != 0); // Avoid division by 0
   if ( scal == 0)
     throw "Division by zero";
   return v1 * (1/scal);
@@ -90,26 +84,6 @@ Int3 operator+(const Int3 &v1, const Int3 &v2)
     v1.z + v2.z
   };
 }
-
-// Int3 operator+(const Int3 &v1, const Uint3 &v2)
-// {
-//   return
-//   {
-//     v1.x + v2.x,
-//     v1.y + v2.y,
-//     v1.z + v2.z
-//   };
-// }
-
-// Int3 operator+(const Int3 &v1, const Int3 &v2)
-// {
-//   return
-//   {
-//     v1.x + v2.x,
-//     v1.y + v2.y,
-//     v1.z + v2.z
-//   };
-// }
 
 Int3& Int3::operator+= (const Int3 &v1)
 {
@@ -182,26 +156,6 @@ Uint3& Uint3::operator+= (const Uint3 &v1)
   return *this;
 }
 
-// Uint3 operator-(const Uint3 &v1, const Uint3 &v2)
-// {
-//   return
-//   {
-//     v1.x - v2.x,
-//     v1.y - v2.y,
-//     v1.z - v2.z
-//   };
-// }
-
-// Int3 operator-(const Int3 &v1, const Uint3 &v2)
-// {
-//   return
-//   {
-//     v1.x - v2.x,
-//     v1.y - v2.y,
-//     v1.z - v2.z
-//   };
-// }
-
 Uint3 operator-(const Uint3 &v1, const Uint3 &v2)
 {
   return
@@ -239,22 +193,6 @@ Uint3& Uint3::operator*= (const uint v1)
   return *this;
 }
 
-// Vec3::Vec3 (std::array<double,3> init_v)
-// {
-//   // assert(init_v.empty()==false);
-//   mVec = init_v;
-// }
-
-// double& Vec3::operator[](int ii)
-// {
-//   return mVec[ii];
-// }
-
-// const double& Vec3::operator[](int ii) const
-// {
-//   return mVec[ii];
-// }
-
 Vec3& Vec3::operator+= (const Vec3 &v1)
 {
   Vec3 result{ *this + v1};
@@ -276,11 +214,6 @@ Vec3& Vec3::operator*= (const double v1)
 
 Vec3 operator+(const Vec3 &v1, const Vec3 &v2)
 {
-  // Vec3 result;
-  // for(int ii = 0; ii < 3; ++ii)
-  // {
-  //   result[ii] = v1[ii] + v2[ii];
-  // }
   return
   {
     v1.x + v2.x,
@@ -316,7 +249,6 @@ Vec3 operator*(const double scal, const Vec3 &v1)
 
 Vec3 operator/(const Vec3 &v1, const double scal)
 {
-  // assert(scal != 0); // Avoid division by 0
   if ( scal == 0)
     throw "Division by zero";
   return v1 * (1/scal);
@@ -335,51 +267,8 @@ Vec3 operator- (const Vec3 &v1)
   };
 }
 
-// double dot(const Vec3 &v1, const Vec3 &v2)
-// {
-//   return
-//   {
-//     v1.x * v2.x +
-//     v1.y * v2.y +
-//     v1.z * v2.z
-//   };
-// }
-
-// double Vec3::dot(const Vec3 &other_vec) const
-// {
-//   return dot(*this,other_vec);
-// }
-
-// Vec3 cross(const Vec3 &v1, const Vec3 &v2)
-// {
-//   // Vec3 cross_product(3);
-//
-//   // cross_product.x = v1.z * v2.y - v1.y * v2.z;
-//   // cross_product.y = v1.x * v2.z - v1.z * v2.x;
-//   // cross_product.z = v1.y * v2.x - v1.x * v2.y;
-//
-//   // return cross_product;
-//   return
-//   {
-//     v1.y * v2.z - v1.z * v2.y,
-//     v1.z * v2.x - v1.x * v2.z,
-//     v1.x * v2.y - v1.y * v2.x
-//   };
-// }
-
-// Vec3 Vec3::cross(const Vec3 &other_vec) const
-// {
-//   return cross(*this,other_vec);
-// }
-
 std::ostream& operator<< (std::ostream &out, const Vec3 &vec)
 {
-  // out << "( ";
-  // for( auto vm : vec.mVec )
-  // {
-  //   out << vm << ", ";
-  // }
-  // out << ")";
   out << vec.x << "\t" << vec.y << "\t" << vec.z;
   return out;
 }
@@ -392,13 +281,6 @@ std::ostream& operator<< (std::ostream &out, const Uint3 &vec)
 
 bool operator== (const Vec3 &v1, const Vec3 &v2)
 {
-  // for( int ii=0; ii<3; ++ii )
-  // {
-  //   if (v1[ii] != v2[ii]) {
-  //     return false;
-  //   }
-  // }
-  // return true;
   return
   {
     ( v1.x == v2.x ) &&
@@ -411,21 +293,6 @@ bool operator!= (const Vec3 &v1, const Vec3 &v2)
 {
   return !(v1 == v2);
 }
-
-// double norm(const std::array<double,3> &v)
-// {
-//   // double norm{0.0};
-//   // for ( auto& elem : v )
-//   // {
-//   //   norm += elem*elem;
-//   // }
-//   return sqrt(dot(v,v));
-// }
-
-// double norm(const Vec3 &v)
-// {
-//   return sqrt(dot(v,v));
-// }
 
 double Vec3::norm() const
 {
@@ -480,7 +347,6 @@ template <typename T> int sgn(T val) {
 inline int sgnDouble(double x)
 {
   // Return a value with the magnitude 1 and sign of x
-  // return std::copysign(1.0,x);
   return sgn(x);
 }
 

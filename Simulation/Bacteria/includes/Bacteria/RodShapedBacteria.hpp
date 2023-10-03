@@ -110,12 +110,7 @@ public:
   static uint counter;              //!< counts the total number of bacteria
   uint mId;                         //!< unique id
 
-#if defined(ADHESION)
-  static double mKappaDep;          //!< adhesive interaction strength
-  static double mRd;                //!< depletion interaction radius
-  static double mRi;                //!< repulsion interaction length
-  static double mRepStrength;       //!< repulsion interaction strength
-#elif defined(CHAINING)
+#if defined(CHAINING)
   static double mKappa;             //!< Spring tension
   static double mBendRig;           //!< Bending rigidity
   static double mLinkingProb;       //!< Probability daughters link
@@ -133,38 +128,6 @@ public:
   { return mUpperEndLinkedTo; }
   virtual IBacterium* getLowerLink() const override
   { return mLowerEndLinkedTo; }
-#elif defined( AG43 )
-  static double mKappa;              //!< Spring tension
-  static double mForceThresh;        //!< Threshold force before breaking
-  SpringHash mSprings; //!< Springs
-  virtual SpringHash& getSprings() override
-  {
-    return mSprings;
-  }
-#endif
-
-
-#ifdef PHAGE
-  double mTimeSinceInfection{ 0.0 };
-  bool mInfectedFlag { false };
-  double mLysisPeriod { 1e20 };
-  uint mBurstSize { 0 };
-  uint mMOI { 0 };
-
-  virtual bool signalLysis() const override
-  { return mTimeSinceInfection>=mLysisPeriod; }
-  virtual void updateTimeSinceInfection(double dt) override
-  { mTimeSinceInfection+=dt; }
-  virtual void setInfected() override { mInfectedFlag=true; }
-  virtual bool isInfected() override { return mInfectedFlag; }
-  virtual void setLysisTime(double _lysis_period) override
-  { mLysisPeriod=_lysis_period; }
-  virtual double getLysisTime() const override { return mLysisPeriod; }
-  virtual void setBurstSize(uint _burst_size) override
-  { mBurstSize=_burst_size; }
-  virtual uint getBurstSize() const override { return mBurstSize; }
-  virtual void updateMOI() override { ++mMOI; }
-  virtual uint getMOI() const override { return mMOI; }
 #endif
 
   uint getID() const override
@@ -259,8 +222,6 @@ public:
   {
 #ifdef CHAINING
     return "ChainingRodShaped";
-#elif defined(AG43)
-  return "AG43RodShaped";
 #else
     return "RodShaped";
 #endif
@@ -384,24 +345,6 @@ public:
     else out << "None" << "\t";
     if (getUpperLink()) out << getUpperLink()->getID() << "\n";
     else out << "None" << "\n";
-#elif defined(AG43)
-    out << getMyType()       << "\t";
-    out << mId               << "\t";
-    out << mLength           << "\t";
-    out << mRadius           << "\t";
-    out << mPos              << "\t";
-    out << getOrientation()  << "\t";
-    out << "[";
-    for ( auto &spring : mSprings )
-    {
-      const Springs& ss { spring.second };
-      assert( ss.mCellB->getID()==spring.first );
-      out << "("
-          << ss.mCellB->getID() << "," << ss.mS << "," << ss.mT << ","
-          << ss.mOriLink.x << "," << ss.mOriLink.y << "," << ss.mOriLink.z
-          << "),";
-    }
-    out << "]\n";
 #else
     out << getMyType()       << "\t";
     out << mId               << "\t";
@@ -442,19 +385,6 @@ void initialiseRodParameters(double aspect_ratio, double growth_rate);
  * param growth_rate: linear growth rate of the bacterium
  */
 
-#ifdef ADHESION
-void initialiseAdhesionParameters(
-  double kappa_depletion,
-  double Rd,
-  double Ri,
-  double rep_strength
-);
-/**<
-  Check the hyperameters for adhesion bacteria are suitable and set the
-  associated static variables.
-*/
-#endif
-
 #ifdef CHAINING
 void initialiseChainingParameters(
   double kappa,
@@ -469,39 +399,6 @@ void initialiseChainingParameters(
   param bend_rig: Bending modulus of the spring
   param linking_prob: Chance daughters link together upon division
   param force_thresh: If forces exceed this threshold, the spring will snap
-*/
-#endif
-
-#ifdef AG43
-void createSpringLinks(
-  std::vector<IBacterium*> &cells
-);
-/**<
-  @brief Set up spring links between the bacteria if they come into contact.
-*/
-
-void removeSpringLinks(
-  std::vector<IBacterium*> &cells
-);
-/**<
-  @brief Remove spring links between the bacteria if they get too far away.
-*/
-
-void initialiseAg43Parameters(
-  double div_len,
-  double growth_rate,
-  double kappa,
-  double force_thresh
-);
-/**<
-  @brief Initialise ag43 hyperparmeters
-*/
-
-void checkSpringLinks(
-  std::vector<IBacterium*> &cells
-);
-/**<
-  @brief Check all springs are connected between the bacteria in the right way
 */
 #endif
 

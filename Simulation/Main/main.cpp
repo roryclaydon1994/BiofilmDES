@@ -91,7 +91,7 @@ int main(int argc, char const *argv[])
   PolyBiofilm pb { initial_conditions };
   pb.runSim();
 #else
-  std::cout << "Please define one of the following MACROS: CHAINING" << '\n';
+  std::cout << "Please define one of the following MACROS: CHAINING or nothing" << '\n';
   exit(42);
 #endif // End control input parameters
 

@@ -121,7 +121,6 @@ inline bool closestApproachLineSegmentsParallel(
     s2 = clampRoot( -(c+e)/b );
     t2 = clampRoot(-(e+b*s2)/c);
     return true;
-    // std::cout << "s: " << s1 << " t: " << t1 << '\n';
   }
   else
   {
@@ -195,24 +194,20 @@ inline void getMinDistWarren(
 
 	if ( l1==0 && l2==0 ) // both segments are degenerate
 	{
-		// std::cout << "both degen" << '\n';
 		s=t=0;
 	}
 	else if ( l1==0 ) // first segment is just a point
 	{
-		// std::cout << "S1 degen" << '\n';
 		s=0;
 		t = clamp(f/l2,0,1);
 	}
 	else if ( l2==0 ) // second segment is just a point
 	{
-		// std::cout << "S2 degen" << '\n';
 		s=clamp(-c/l1,0,1);
 		t=0;
 	}
 	else // both segments are not degenerate
 	{
-		// std::cout << "None degen" << '\n';
 		denom = l1*l2-b*b; // | v1 x v2 |^2
 
 		if (denom!=0) // if not parallel Segments or degenerate
@@ -236,20 +231,17 @@ inline void getMinDistWarren(
 		if (tnom<0)
 		{
 			t = 0;
-			// std::cout << "tnom<0" << '\n';
 			assert(l1>0);
 			s = clamp(-c/l1,0,1);
 		}
 		else if (tnom>l2)
 		{
 		  t = 1;
-			// std::cout << "tnom>l2" << '\n';
 			assert(l1>0);
 		  s = clamp((b-c)/l1,0,1);
 		}
 		else
 		{
-			// std::cout << "point in the line" << '\n';
 			assert(l2>0);
 		  t = tnom/l2;
 		}
@@ -258,38 +250,6 @@ inline void getMinDistWarren(
 	c2 = p2+v2*t;
 	cv = c1-c2;
 	d = sqrt(dot(cv,cv));		// length of segment connecting two cells
-
-	// For testing purposes only
-	// if (
-	// 	( cell1->getID()==1 && cell2->getID()==1 )
-	// 	&&
-	// 	( cell1->getMyType()!=cell2->getMyType() )
-	// )
-	// if ( cell1->getMyType()=="RodShaped" )
-	// {
-	// 	std::cout << "\n-------------\n";
-	// 	std::cout << "cell1: " << cell1->getMyType() << cell1->getID() << '\n';
-	// 	std::cout << "cell2: " << cell2->getMyType() << cell2->getID() << '\n';
-	// 	std::cout << "c1: " << c1 << '\n';
-	// 	std::cout << "c2: " << c2 << '\n';
-	// 	std::cout << "d: "  << d  << '\n';
-	// 	std::cout << "==============" << '\n';
-	// 	closestApproachLineSegmentsPournin(cell1->getPos(),0.5*v1,
-	//                                      cell2->getPos(),0.5*v2,
-	//                                      s, t);
-	//
-	// 	c1 = cell1->getPos()+0.5*v1*s;
- 	// 	c2 = cell2->getPos()+0.5*v2*t;
- 	// 	cv = c1-c2;
- 	// 	d = sqrt(dot(cv,cv));		// length of segment connecting two cells
-	// 	std::cout << "\n-------------\n";
-	// 	std::cout << "cell1: " << cell1->getMyType() << cell1->getID() << '\n';
-	// 	std::cout << "cell2: " << cell2->getMyType() << cell2->getID() << '\n';
-	// 	std::cout << "c1: " << c1 << '\n';
-	// 	std::cout << "c2: " << c2 << '\n';
-	// 	std::cout << "d: "  << d  << '\n';
-	// 	std::cout << "==============" << '\n';
-	// }
 }
 
 inline void findSqrDistToLine(

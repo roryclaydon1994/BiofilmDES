@@ -80,7 +80,6 @@ void getMinMax(
   {
     min_pos  = min3(min_pos,pp->getPos());
     max_pos  = max3(max_pos,pp->getPos());
-    // std::cout << pp->getMyType() << " " << pp->getEffectiveR() << '\n';
     max_size = std::max(max_size,2*pp->getEffectiveR());
   }
 }
@@ -105,7 +104,6 @@ public:
 
   uint getParticleCellID(const Uint3 grid_cell)
   {
-    // std::cout << "grid index: " << grid_cell << " @ " << v << '\n';
     return mGridSize.y*mGridSize.x*grid_cell.z +
            mGridSize.x*grid_cell.y +
            grid_cell.x;
@@ -156,7 +154,6 @@ public:
     {
       uint grid_index { getParticleCellID( getCellIndex(particle->getPos()) ) };
 
-      // particle->getHeadLink() = mGridCells[grid_index].mHead;
       particle->setHeadLink(mGridCells[grid_index].mHead);
 
       particle->getGridCell() = grid_index;
@@ -176,7 +173,6 @@ public:
       particle->getNeighbourList().clear(); particle->getNeighbourList().reserve(6);
 
       // Get the grid node this particle lives in
-      // GridCell* current_grid_cell = mGridCells[particle->getGridCell()];
 
       Uint3 cell_indices { getCellIndex(particle->getPos()) } ;
 
@@ -201,11 +197,7 @@ public:
                 ( particle->getMyType() == other_particle->getMyType() )
               };
               const Vec3 sep { particle->getPos()-other_particle->getPos() };
-#ifdef ADHESION // Long range interactions, so need to include more NN
-              const bool in_range {
-                dot2( sep ) <= dot2( mVerletRadius )
-              };
-#else // Exclusively steric interactions assumed so we can get away with less
+
               const double max_sep {
                 particle->getEffectiveR()+
                 other_particle->getEffectiveR()+
@@ -214,7 +206,7 @@ public:
               const bool in_range {
                 dot2( sep ) <= dot2( max_sep )
               };
-#endif
+
               if ( in_range && !( same_particle ) )
               {
                 particle->getNeighbourList().push_back( other_particle );
@@ -235,12 +227,11 @@ public:
     Vec3 min_pos,max_pos;
     double max_size;
     getMinMax(particle_list,min_pos,max_pos,max_size);
-    // std::cout << "max pos: " << max_pos << " min_pos: " << min_pos << " max_size: " << max_size << '\n';
-    // std::cout << "mCellSize " << mCellSize << '\n';
+
     assert(
       (max_size<=mCellSize.x) && (max_size<=mCellSize.y) && (max_size<=mCellSize.z)
     );
-    // std::cout << "cell size " << mCellSize << '\n';
+
     mGridSize = Uint3(
       findNextPowerOf2(floor( 1 + 2*std::max(fabs(max_pos.x),fabs(min_pos.x)) / mCellSize.x )),
       findNextPowerOf2(floor( 1 + 2*std::max(fabs(max_pos.y),fabs(min_pos.y)) / mCellSize.y )),
@@ -263,15 +254,11 @@ public:
     const std::vector< S* > &particle_list
   )
   {
-    // std::cout << "reallocate grid" << '\n';
     allocateGrid(particle_list);
 
-    // std::cout << "updates grid" << '\n';
     updateGridCellLists(particle_list);
 
-    // std::cout << "updates neighbour" << '\n';
     createNeighbourLists(particle_list);
-    // std::cout << "Completed updating list" << '\n';
 
     // If a new list is created, store the cell's current positions
     for ( auto &particle : particle_list )
@@ -279,12 +266,7 @@ public:
   }
 
   ~GridCells()
-  {
-    // for ( auto gg : mGridCells )
-    // {
-    //   delete gg;
-    // }
-  }
+  {}
 };
 
 #endif

@@ -18,10 +18,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # All possible simulation MACROS listed below - see README.md
-# -D CHAINING -D DEBUG_CHAINING -D PHAGE -D MOVE_3D -D RANDOM_SEED
+# -D CHAINING -D DEBUG_CHAINING -D MOVE_3D -D RANDOM_SEED
 
 # Change CMAKE_BUILD_TYPE to Debug and turn on the following for development
-#set(DEBUGGING_FLAGS "-Wall -pedantic -g -pg")
+# set(DEBUGGING_FLAGS "-Wall -pedantic -g -pg")
 
 set(SIM_DEFS "-D CHAINING -D RANDOM_SEED")
 string(APPEND SIM_DEFS  " -fopenmp ")
@@ -51,9 +51,10 @@ message("  Source (BiofilmDES): ${BiofilmDES_SOURCE_DIR}")
 add_subdirectory(includes)
 add_subdirectory(IO)
 add_subdirectory(MathUtility)
-add_subdirectory(Phage)
 add_subdirectory(Bacteria)
 add_subdirectory(Grid)
 add_subdirectory(Forces)
 add_subdirectory(Biofilm)
 add_subdirectory(Main)
+
+add_subdirectory(Tests)

@@ -104,8 +104,6 @@ public:
   friend std::ostream& operator<< (std::ostream &out, const Vec3 &vec);
 
   // Member vector operators
-  // double dot(const Vec3 &other_vec) const;
-  // Vec3 cross(const Vec3 &other_vec) const;
   double norm() const;
 
   // Return number of elements of Vec3
@@ -129,8 +127,6 @@ Vec3 operator*(const double scal, const Vec3 &v1);
 Vec3 operator/(const Vec3 &v1, const double scal);
 
 /* Vector operators between any two instances of Vec3 */
-// double dot(const Vec3 &v1, const Vec3 &v2);
-// Vec3 cross(const Vec3 &v1, const Vec3 &v2);
 Vec3 min3(Vec3 a, Vec3 b);
 Vec3 max3(Vec3 a, Vec3 b);
 Vec3 mod3(Vec3 r, double a);
@@ -246,15 +242,6 @@ inline Vec3 projectAngVelRod(const Vec3 ang_vel, const Vec3 angles)
   };
 }
 
-// inline Uint3 max3(Uint3 a, Uint3 b)
-// {
-//   return {
-//     std::max(a.x,b.x),
-//     std::max(a.y,b.y),
-//     std::max(a.z,b.z)
-//   };
-// }
-
 inline int umax(int a, int b)
 {
   return (a<b) ? b : a;
@@ -265,16 +252,6 @@ inline int umin(int a, int b)
   return (a<b) ? a : b;
 }
 
-// inline Uint3 absMax(Uint3 a)
-// {
-//   return {
-//     std::max(
-//       std::max(a.x,a.y),
-//       a.z
-//     )
-//   };
-// }
-
 inline bool isclose(
   const double x,
   const double y,
@@ -283,7 +260,6 @@ inline bool isclose(
 )
 {
   // python is close
-  // abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
   return fabs(x-y)<=std::max( rel_tol*std::max(fabs(x),fabs(y)),abs_tol );
 }
 

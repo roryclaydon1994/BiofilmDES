@@ -43,38 +43,6 @@ inline std::string createFileName(
 }
 
 //--------------------------------- Outputs ------------------------------------
-// template < class S >
-// void printCellsToFile(
-//   const std::string file_name,
-//   const std::vector< S > &element_list,
-//   bool verbose=false
-// )
-// {
-//   // std::cout << "Saving to " << file_name << '\n';
-//   std::ofstream out_file{ file_name, std::ios::out };
-//   if (!out_file)
-//   {
-//     std::cerr << "Failed to open "
-//               << file_name
-//               << " for writing!"
-//               << std::endl;
-//     exit (10);
-//   }
-//   if ( verbose )
-//     std::cout << "writing data to " << file_name << '\n';
-//
-//   for ( auto header : col_headers ) {
-//     out_file << header;
-//   }
-//   out_file << "\n";
-//
-//   for ( auto &cell : element_list )
-//   {
-//     // std::cout << *cell << '\n';
-//     printCellDataToFile(out_file,cell) << "\n";
-//   }
-//   out_file.close();
-// }
 
 template < class S >
 void printCellsToFile(
@@ -84,7 +52,6 @@ void printCellsToFile(
   bool verbose=false
 )
 {
-  // std::cout << "Saving to " << file_name << '\n';
   std::ofstream out_file;
   if ( append ) out_file.open( file_name, std::ios::app );
   else out_file.open( file_name, std::ios::out );
@@ -104,7 +71,6 @@ void printCellsToFile(
     for ( auto header : col_headers ) {
       out_file << header;
     }
-  // out_file << "\n";
 
   for ( auto &cell : element_list )
   {
@@ -115,7 +81,6 @@ void printCellsToFile(
 
 //---------------------------------- Inputs ------------------------------------
 
-// template < class S >
 void populateCellsFromFile(
   const std::string file_name,
   std::vector< IBacterium* > &element_list,
@@ -124,24 +89,7 @@ void populateCellsFromFile(
 
 /*--------------------------- Expected Types ---------------------------------*/
 
-// template void populateCellsFromFile(
-//   const std::string file_name,
-//   std::vector<std::unique_ptr<RodShapedBacterium>> &element_list
-// );
-//
-// template void printCellsToFile(
-//   const std::string file_name,
-//   const std::vector<std::unique_ptr<RodShapedBacterium>> &element_list
-// );
-//
-// template void printCellsToFile(
-//   const std::string file_name,
-//   const std::vector<std::unique_ptr<GenericInfected>> &element_list
-// );
-//
-
 /**
-
   Parameters:
     out: ostream to append to
     cell: pointer to cell to print out
@@ -163,8 +111,4 @@ std::ostream& printBaseCellDataToFile(std::ostream &out,
 
 template std::ostream& printBaseCellDataToFile(std::ostream &out,
                                                const RodShapedBacterium& cell);
-// template std::ostream& printBaseCellDataToFile(std::ostream &out,
-//                                                const ChainingRodShapedBacterium& cell);
-// template std::ostream& printBaseCellDataToFile(std::ostream &out,
-//                                                const GenericInfected& cell);
 #endif

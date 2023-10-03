@@ -53,19 +53,7 @@ void PolyBiofilm::createLogFile()
   headers.push_back("RodGrowthRate");
   values.push_back(RodShapedBacterium::mAvgGrwthRate);
 
-#if defined(ADHESION)
-  headers.push_back("KappaDep");
-  values.push_back(RodShapedBacterium::mKappaDep);
-
-  headers.push_back("Rd");
-  values.push_back(RodShapedBacterium::mRd);
-
-  headers.push_back("Ri");
-  values.push_back(RodShapedBacterium::mRi);
-
-  headers.push_back("RepStrength");
-  values.push_back(RodShapedBacterium::mRepStrength);
-#elif defined(CHAINING)
+#if defined(CHAINING)
   headers.push_back("Kappa");
   values.push_back(RodShapedBacterium::mKappa);
 
@@ -74,12 +62,6 @@ void PolyBiofilm::createLogFile()
 
   headers.push_back("LinkingProb");
   values.push_back(RodShapedBacterium::mLinkingProb);
-
-  headers.push_back("ForceThresh");
-  values.push_back(RodShapedBacterium::mForceThresh);
-#elif defined(AG43)
-  headers.push_back("Kappa");
-  values.push_back(RodShapedBacterium::mKappa);
 
   headers.push_back("ForceThresh");
   values.push_back(RodShapedBacterium::mForceThresh);
@@ -105,9 +87,6 @@ void PolyBiofilm::updateOneTimeStep(bool &update_neighbours, uint &verlet_counte
   // ---------------------- Grow and divide cells ------------------------------
   for ( int ii=mCells.size()-1; ii>=0; --ii )
   {
-#ifdef PHAGE
-    if ( mCells[ii]->isInfected()==false )
-#endif
     {
       mCells[ii]->grow(mDt);
       if ( mCells[ii]->signalDivide() )
@@ -129,18 +108,8 @@ void PolyBiofilm::updateOneTimeStep(bool &update_neighbours, uint &verlet_counte
     update_neighbours=false;
   }
 
-#ifdef AG43
-  // Create springs between the cells if they come into contact
-  createSpringLinks(mCells);
-#endif
-
   // Update the force and torque for each cell to the current time
   polyInteractParticles(mCells);
-
-#ifdef AG43
-  // Remove links if they get too far away
-  removeSpringLinks(mCells);
-#endif
 
   for ( auto &cell : mCells )
   {
@@ -154,34 +123,6 @@ void PolyBiofilm::updateOneTimeStep(bool &update_neighbours, uint &verlet_counte
     }
     cell->reset();
   }
-
-#ifdef PHAGE
-  // Add the phage interaction here
-  // phage at their current positions attempt to infect the bacteria
-  // move remining phage
-  attemptInfections(mCells,mPhage,mGrid);
-  for ( auto phage : mPhage ) { phage->move(mDt); }
-  mNumberOfInfected=0;
-  for ( int ii=mCells.size()-1; ii>=0; --ii )
-  {
-    if ( mCells[ii]->isInfected() )
-    {
-      ++mNumberOfInfected;
-      mCells[ii]->updateTimeSinceInfection(mDt);
-      if ( mCells[ii]->signalLysis() )
-      {
-        lyseCell(mCells[ii],mPhage);   // Create phage uniformly over lysed cell
-        delete mCells[ii];
-        mCells.erase(mCells.begin()+ii);  // Remove the dead cell
-        update_neighbours=true;
-      }
-    }
-  }
-#endif
-
-#if defined(AG43) && !defined(NDEBUG)
-  checkSpringLinks(mCells);
-#endif
 
 }
 
@@ -197,9 +138,6 @@ void PolyBiofilm::runSim()
   long output_counter { 0 };      // Index the outputs
   bool update_neighbours { true };// Always bin neighbours on first step
   const ulong num_outputs { static_cast<ulong>(ceil(mTimeSteps/mOutFreq)) };
-#ifdef PHAGE
-  bool released_phage { false };
-#endif
   for ( ulong tt=0; tt<=mTimeSteps; ++tt )
   {
     // check for outputting
@@ -218,9 +156,6 @@ void PolyBiofilm::runSim()
         false,
         false
       );
-#ifdef PHAGE
-      printCellsToFile(createFileName(output_counter),mPhage,true,false);
-#endif
 
       ++output_counter;
 
@@ -239,37 +174,6 @@ void PolyBiofilm::runSim()
 
     updateOneTimeStep(update_neighbours,verlet_counter);
 
-#ifdef PHAGE
-    if ( tt*mDt*constants::baseTimeScale>0 && released_phage==false )
-    {
-      std::cout << "Release phage" << '\n';
-      mPhage.push_back( new Phage(0,0,0) );
-      released_phage=true;
-    }
-    if ( mNumberOfInfected==mCells.size() || mCells.size()==0 )
-    {
-      updateStatus(output_counter,num_outputs);
-      printCellsToFile(
-        createFileName(
-          output_counter,
-          "final_",
-          sim_out_dir
-        ),
-        mCells,
-        false,
-        false);
-      printCellsToFile(
-        createFileName(
-          output_counter,
-          "final_",
-          sim_out_dir
-        ),
-        mPhage,
-        true,
-        false);
-      break;
-    }
-#endif
     if ( getLength()>=mTargetSize  )
     {
       printCellsToFile(

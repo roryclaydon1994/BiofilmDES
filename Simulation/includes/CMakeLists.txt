@@ -1,8 +1,4 @@
-if ( ON_CLUSTER )
-  set(OUTPUT_DIR "/storage/datastore-personal/s1836309/BiofilmDES/SimOutput/" )
-else()
-  set(OUTPUT_DIR "${PROJECT_SOURCE_DIR}/../GeneratedOutput/SimOutput/" )
-endif()
+set(OUTPUT_DIR "${PROJECT_SOURCE_DIR}/../GeneratedOutput/SimOutput/" )
 
 message("OUTPUT_DIR: ${OUTPUT_DIR}")
 set(SIM_DIR ${OUTPUT_DIR})

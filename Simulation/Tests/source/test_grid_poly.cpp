@@ -12,13 +12,9 @@
 // Custom classes
 #include "constants.hpp"         // definition of constants namespace
 #include "MathUtility.hpp"
-// #include "particle.hpp"
 #include "IBacterium.hpp"
 #include "RodShapedBacteria.hpp"
 #include "SphericalBacteria.hpp"
-// #include "chaining_susceptible_class.hpp"
-// #include "infected_class.hpp"
-// #include "Phage.hpp"
 #include "VerletGrid.hpp"
 
 std::mt19937 generator {

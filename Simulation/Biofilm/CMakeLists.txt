@@ -8,4 +8,4 @@ add_library(
   )
 
 target_include_directories(Biofilm PUBLIC includes/Biofilm)
-target_link_libraries(Biofilm PRIVATE MathUtility Phage Bacteria Grid IO Forces)
+target_link_libraries(Biofilm PRIVATE MathUtility Bacteria Grid IO Forces)

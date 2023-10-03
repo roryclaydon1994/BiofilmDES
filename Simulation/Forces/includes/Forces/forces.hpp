@@ -73,7 +73,7 @@
 #include "IO.hpp"
 #include "HyperParams.hpp"
 
-inline void pairCollision( IBacterium *A, const IBacterium *B );
+void pairCollision( IBacterium *A, const IBacterium *B );
 /**<
   \brief Update force and torque on A due to all interactions with B
 
@@ -148,15 +148,6 @@ void getSpringEnergy(
   @param[in] upper_cell: Upper cell in the link
   @param[in] bend_energy: Bending energy due to changes in orientation
   @param[in] spring_energy: Extension energy due to cells pulled apart
-  @return Void.
-*/
-
-inline void computeAg43Force( IBacterium *cell );
-/**<
-  @brief For all cells this cell is stuck to, find the sticky force between them.
-  @param[in] cell: Cell to be updated due to interaction
-  @param[in] neighbours: Cells this cell is stuck to
-  @param[out] force/torque: force/torque on cell due to this interaction
   @return Void.
 */
 

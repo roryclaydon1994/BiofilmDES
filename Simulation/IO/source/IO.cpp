@@ -16,21 +16,6 @@ std::vector<std::string> col_headers
   "lower_link\t", // Output who these bacteria are chained to
   "upper_link\n"
 };
-#elif defined(AG43)
-std::vector<std::string> col_headers
-{
-  "cell_type\t",
-  "cell_id\t",
-  "length\t",
-  "radius\t",
-  "pos_x\t",  // com position vector components
-  "pos_y\t",
-  "pos_z\t",
-  "ori_x\t",  // orientation vector components
-  "ori_y\t",
-  "ori_z\t",
-  "springs\n" // spring data
-};
 #else
 std::vector<std::string> col_headers
 {
@@ -83,7 +68,6 @@ void populateCellsFromFile(
   std::cout << "Reading in all the same growthFactor" << '\n';
   while (std::getline(inp_file, strInput))
   {
-    // std::cout << strInput << '\n';
     std::stringstream ss(strInput);
 
     const long columns { static_cast<long>( col_headers.size() ) };
@@ -94,11 +78,6 @@ void populateCellsFromFile(
     double length; ss>>length;
     double radius; ss>>radius;
     Vec3 pos; ss>>pos.x; ss>>pos.y; ss>>pos.z;
-
-    // for ( int ii=1; ii<columns; ++ii ) {
-    //   ss >> cell_data[ii];
-    //   std::cout << "cell_data[" << ii << "] = " << cell_data[ii] << '\n';
-    // }
 
     if ( cell_type=="Spherical" )
     {
@@ -149,17 +128,6 @@ void populateCellsFromFile(
       exit(567);
     }
 
-
-
-    // element_list.emplace_back(
-    //   cell_data[3],                       // rcm_x
-    //   cell_data[4],                       // rcm_y
-    //   cell_data[5],                       // rcm_z
-    //   theta,                              // theta
-    //   0.5*constants::pi,                  // alpha
-    //   constants::nondim_rodGrwthRtePreFac,   // grwthPreFac
-    //   cell_data[1]                        // init_length
-    // );
     exit(23);
   }
   std::cout << "Loaded " << element_list.size() << " cells" << '\n';

@@ -65,7 +65,6 @@
 // User defined libraries
 #include "constants.hpp" // definition of constants namespace
 #include "MathUtility.hpp"
-// #include "particle.hpp"
 #include "IBacterium.hpp"
 
 /*----------------------------------------------------------------------------*/
@@ -111,28 +110,6 @@ public:
   }
 
   /*--------------------- --------------------------*/
-  #ifdef PHAGE
-  double mTimeSinceInfection{ 0.0 };
-  bool mInfectedFlag { false };
-  double mLysisPeriod { 1e20 };
-  uint mBurstSize { 0 };
-  uint mMOI { 0 };
-
-  virtual bool signalLysis() const override
-  { return mTimeSinceInfection>=mLysisPeriod; }
-  virtual void updateTimeSinceInfection(double dt) override
-  { mTimeSinceInfection+=dt; }
-  virtual void setInfected() override { mInfectedFlag=true; }
-  virtual bool isInfected() override { return mInfectedFlag; }
-  virtual void setLysisTime(double _lysis_period) override
-  { mLysisPeriod=_lysis_period; }
-  virtual double getLysisTime() const override { return mLysisPeriod; }
-  virtual void setBurstSize(uint _burst_size) override
-  { mBurstSize=_burst_size; }
-  virtual uint getBurstSize() const override { return mBurstSize; }
-  virtual void updateMOI() override { ++mMOI; }
-  virtual uint getMOI() const override { return mMOI; }
-  #endif
 
 #ifdef CHAINING
   // Pointers to who this cell is connected to
@@ -146,13 +123,6 @@ public:
   { return mUpperEndLinkedTo; }
   virtual IBacterium* getLowerLink() const override
   { return mLowerEndLinkedTo; }
-#endif
-#ifdef AG43
-  virtual SpringHash& getSprings() override
-  {
-    std::cout << "Error in spherical bacteria get springs" << '\n';
-    exit(12);
-  }
 #endif
 
   virtual Vec3 getPos() const override

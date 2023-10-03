@@ -11,4 +11,4 @@ add_library(
   includes/Bacteria/SphericalBacteria.hpp
   )
 target_include_directories(Bacteria PUBLIC includes/Bacteria)
-target_link_libraries(Bacteria PRIVATE MathUtility IO Phage)
+target_link_libraries(Bacteria PRIVATE MathUtility IO)

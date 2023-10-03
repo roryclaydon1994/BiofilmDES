@@ -126,84 +126,21 @@ namespace constants
     avg_div_radius / baseLengthScale
   };
 
-  // ------------------------------- Phage -------------------------------------
-// #ifdef PHAGE
-  inline constexpr double phage_diffusion { 4.0 }; // m^2/s
+  // -------------------------- Chaining -------------------------------
 
-  inline constexpr double nondim_phage_diffusion {
-    ( phage_diffusion*3600.0 ) * baseTimeScale / pow(baseLengthScale,2)
-  };
-
-  // https://www.ncbi.nlm.nih.gov/pmc/articles/PMC93561/pdf/jb001677.pdf
-  inline constexpr double lysis_period { 23.6 }; // minutes
-  inline constexpr double std_lysis_period { 4.3 }; // minutes
-  inline constexpr double avg_eclipse_period { 18.3 }; // minutes
-  inline constexpr double std_eclipse_period {  3.4 }; // minutes
-
-  inline constexpr double nondim_lysis_period {
-    ( lysis_period/60.0 ) / baseTimeScale
-  };
-  inline constexpr double nondim_std_lysis_period {
-    ( std_lysis_period/60.0 ) / baseTimeScale
-  };
-
-  inline constexpr double nondim_avg_eclipse_period {
-    ( avg_eclipse_period/60.0 ) / baseTimeScale
-  };
-  inline constexpr double nondim_std_eclipse_period {
-    ( std_eclipse_period/60.0 ) / baseTimeScale
-  };
-
-  inline constexpr double nondim_avg_lysis_rate { 1.0 / nondim_lysis_period };
-
-  inline constexpr uint burst_size { 50 }; // not used if variable burst used
-  inline constexpr double phage_production_rate =
-    247.1/( nondim_lysis_period-nondim_avg_eclipse_period );
-
-// #endif // end phage definition
-  // ------------------------------ Adhesion -----------------------------------
-
-#ifdef ADHESION
-  // Dimensional
-  inline constexpr double EPS_radius { 0.5 };                        // microns
-  inline constexpr double Rd { 0.5*rodSpheroDiam+EPS_radius };       // microns
-  inline constexpr double Ri { Rd*2 };                               // microns
-
-  // Non dimensional
-  inline constexpr double nondim_Rd { Rd / baseLengthScale };
-  inline constexpr double nondim_Ri { Ri / baseLengthScale };
-  inline constexpr double kappa_depletion { 5e-3 };
-  inline constexpr double repulsion_strength { 10 };
-
-#endif // end adhesion definition
-  // -------------------------- Chaining & AG43 -------------------------------
-
-  // Assuming a perfectly elastic rod linking the two RodShapedBacterium, with a Young's
-  // modulus E_rod = 5300 Pa, radius = 0.5 microns, with a circular cross-section
-  // the bending stiffness is given by K = R_rod (pi r^2 / 2)^2
-  // inline constexpr double nondim_K_bend {
-  //   5300*pi*0.25*(0.1*0.1*0.1*0.1) / (rodModE)
-  // };
-  // inline constexpr double kappa { 1 };
   inline constexpr double nondim_K_bend {
     1
   };
   // inline constexpr double nondim_kappa { kappa / ( baseModE * rodSpheroDiam ) };
   inline constexpr double nondim_kappa { 1 };
 
-  inline constexpr double max_extension { 0.1*nondim_rodSpheroDiam };
-
   // ------------------------- Integration Constants ---------------------------
 
   // Biofilm specific constants
   inline constexpr double colony_size_target{ 37500.0 };
-  // inline constexpr double colony_size_target{ 30.0 };
-  // inline constexpr double colony_size_target{ 1200.0 };
 
   // Grid
   inline constexpr double box_width { nondim_rodSpheroDiam+nondim_avg_div_L };
-  // periodic boundary for phage
-  inline constexpr double max_grid_size { 200*box_width };
 
 }
 #endif // End fileguard

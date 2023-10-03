@@ -8,7 +8,6 @@
 #include "constants.hpp"
 #include "IBacterium.hpp"
 #include "VerletGrid.hpp"
-#include "Phage.hpp"
 #include "RodShapedBacteria.hpp"
 
 class PolyBiofilm
@@ -17,10 +16,6 @@ public:
   /*----------------------------- Sim Parameters -----------------------------*/
   double mDt { constants::nondim_dt };
   std::vector<IBacterium*> mCells;
-#ifdef PHAGE
-  std::vector<Phage*> mPhage;
-  uint mNumberOfInfected { 0 };
-#endif
   uint  mOutFreq;
   double mTargetSize{ constants::colony_size_target }; // If length > this, stop
 
@@ -29,19 +24,11 @@ public:
 
   /*------------------------------- Utilities --------------------------------*/
   PolyBiofilm (
-#ifndef PHAGE
     std::vector<IBacterium*>& _cells,
-#else
-    std::vector<IBacterium*>& _cells,
-    // std::vector<Phage*>& _phage
-#endif
     double _box_width=constants::box_width
   ) :
     mDt { constants::nondim_dt },
     mCells{ _cells },
-#ifdef PHAGE
-    // mPhage{ _phage },
-#endif
     mGrid{ _cells, _box_width }
   {
 
@@ -85,12 +72,6 @@ public:
               << std::left << std::setw(5) << num_outputs
               << " ---- "
               << "num bacteria: " << std::setw(6) << std::left << mCells.size()
-#ifdef PHAGE
-              << " "
-              << "num infected: " << std::setw(6) << std::left << mNumberOfInfected
-              << " "
-              << "num phage: "    << std::setw(6) << std::left << mPhage.size()
-#endif
               << std::flush;
   }
 
@@ -115,9 +96,6 @@ public:
     {
       delete cell;
     }
-#ifdef PHAGE
-  for ( auto &phage : mPhage ) delete phage;
-#endif
   }
 };
 

@@ -9,7 +9,6 @@ target_link_libraries(
   PRIVATE
   MathUtility
   Forces
-  Phage
   Bacteria
   Biofilm
   IO
