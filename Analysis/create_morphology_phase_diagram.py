@@ -1,11 +1,10 @@
 """
-
+Create a 2D colony morphology
 """
 
 # Standard modules
 import os
 from typing import Iterable, Optional
-import functools
 import glob
 
 # Third party modules
@@ -20,14 +19,17 @@ from fastCellPlotting import addAllCellsToPlot
 from DistributionFunctions import computeColonyContour
 import RodShapedBacteria
 
-def load_cells_from_file_generator(files: Iterable[str], delimeter: str = '\t'):
+
+def load_cells_from_file_generator(
+    files: Iterable[str], delimeter: str = "\t"
+) -> Iterable[NDArray]:
     """
     Load cell data as numpy array.
 
     At present, assumes the file is a plain txt file/csv with the first row the column titles:
     type, id, length, radius, pos_x, pos_y, pos_z, ori_x, ori_y, ori_z, lower_link, upper_link
 
-    :param files: 
+    :param files:
     :param delimeter: delimeter used in the csv file
     :returns: cell data as numpy array
     """
@@ -43,7 +45,7 @@ class MorphologyPhaseDiagram:
     Handle creation of a 2D morphology phase diagram.
     """
 
-    def __init__(self, x, y, files, labels: Optional[Iterable]) -> None:
+    def __init__(self, x, y, files, labels: Optional[Iterable] = None) -> None:
         """
         :param x: x-axis independent variable, assumed ascending order if not categorical
         :param y: y-axis independent variable, assumed ascending order if not categorical
@@ -57,7 +59,7 @@ class MorphologyPhaseDiagram:
                n_x-1   |  n_x-1  |    0
                 n_x    |    0    |    1
             and so on.
-
+        :param labels: if provided, colour different colonies according to this label and add legend
         """
         self.x: Iterable = x
         self.y: Iterable = y
@@ -72,14 +74,28 @@ class MorphologyPhaseDiagram:
         self.box_widths = np.zeros(self.n_x)
         self.box_heights = np.zeros(self.n_y)
 
-    def get_flat_index_from_row_col(self, x_index, y_index):
+    def get_flat_index_from_row_col(self, x_index: int, y_index: int) -> int:
+        """
+        Convert the row and column to a flattened index.
+
+        :param x_index: index of the x independent variable
+        :param y_index: index of the y independent variable
+        :return: flattened index
+        """
         return x_index + self.n_x * y_index
 
-    def get_row_col_from_flat_index(self, index):
+    def get_row_col_from_flat_index(self, index: int) -> (int, int):
+        """
+        Convert the row and column to a flattened index.
+
+        :param index: flattened index
+        :return x_index: index of the x independent variable
+        :return y_index: index of the y independent variable
+        """
         y_index, x_index = divmod(index, self.n_x)
         return x_index, y_index
 
-    def get_next_raw_cell_data(self, delimeter: str = "\t") -> NDArray:
+    def get_next_raw_cell_data(self, delimeter: str = "\t") -> Iterable[NDArray]:
         """
         Load cell data as numpy array using provided cell loader
 
@@ -92,7 +108,6 @@ class MorphologyPhaseDiagram:
         """
         Estimate how large the row and column spacings need to be for the grid
         """
-
         for index, cell_data in enumerate(self.get_next_raw_cell_data()):
             mins = np.min(cell_data[:, 2:4], axis=0)
             maxs = np.max(cell_data[:, 2:4], axis=0)
@@ -110,28 +125,40 @@ class MorphologyPhaseDiagram:
         reduce memory load.
         """
         os.makedirs(tmp_dir, exist_ok=False)
-        xs = find_centres(self.box_widths)
-        ys = find_centres(self.box_heights)
+        xs = get_midway_steps(self.box_widths)
+        ys = get_midway_steps(self.box_heights)
 
         for index, cell_data in enumerate(self.get_next_raw_cell_data()):
             x_index, y_index = self.get_row_col_from_flat_index(index)
             cell_data[:, 2:4] += np.array([xs[x_index], ys[y_index]])
             np.savetxt(f"{tmp_dir}/{index:05d}.dat", cell_data)
 
-    def add_all_colonies_to_plot(self, tmp_dir: str = "./temp"):
+    def add_all_colonies_to_plot(
+        self, tmp_dir: str = "./temp", line_width_scale: float = 1000
+    ):
         """
-        Add all the mapped colonies to plot
+        Plot all the mapped colonies on a canvas.
+
+        :param tmp_dir: temporary directory where intermediate files are stored
+        :param line_width_scale: modifier for the line width on the bacteria and colony outline
         """
 
         files = glob.glob(f"{tmp_dir}/*")
-        fig, ax = plt.subplots(1, 1, figsize=ut.getFigsize(cols=2), constrained_layout=True)
+        fig, ax = plt.subplots(
+            1, 1, figsize=ut.getFigsize(cols=2), constrained_layout=True
+        )
         ax.set_facecolor("k")
 
         for file in files:
             cell_data = np.loadtxt(file)
             nc = len(cell_data)
-            cells = [RodShapedBacteria.RodShapedBacterium(ii, *cell_data[ii]) for ii in range(nc)]
-            addAllCellsToPlot(cells, ax, ax_rng=1000, alpha=0.8, ec='w')
+            cells = (
+                RodShapedBacteria.RodShapedBacterium(ii, *cell_data[ii])
+                for ii in range(nc)
+            )
+            addAllCellsToPlot(cells, ax, ax_rng=line_width_scale, alpha=0.8, ec="w")
+
+        ax.axis("scaled")
 
         fig.savefig(
             f"{tmp_dir}/morphology_phase_diagram.png",
@@ -142,25 +169,38 @@ class MorphologyPhaseDiagram:
         plt.show()
 
 
-def find_centres(array):
-    n = len(array)
-    locs = np.zeros(n, dtype=int)
+def get_midway_steps(array: NDArray) -> NDArray:
+    """
+    Given an array of step sizes, determine the position of the centre of each
+    step, counting the first to be at 0.
+
+    :param array: array of step sizes
+    :returns: positions of each centre step
+    """
+    locs = np.zeros_like(array)
     locs[1:] = array[1:-1] + array[2:]
-    return np.cumsum(locs)
+    return 0.5 * np.cumsum(locs)
 
 
-if __name__ == "__main__":
+def create_example_morphology_plot(load_directory_path: str):
+    """
+    Create a morphology phase diagram
+    """
     x = np.arange(3)
     y = np.arange(3)
-    base_file_name = "/home/rory/PhD_sync/BiofilmPhageDES/GeneratedOutput/SimOutput/ChainingPhaseDiagramFinal/run379/repeat0/"
-    files = [f"{base_file_name}/biofilm_{ii:05d}.dat" for ii in range(99, 108)]
-    print(len(x), len(y), len(files))
-    mpd = MorphologyPhaseDiagram(x, y, files, files)
+    files = [f"{load_directory_path}/biofilm_{ii:05d}.dat" for ii in range(99, 108)]
+    mpd = MorphologyPhaseDiagram(x, y, files)
     mpd.estimate_grid_dimensions()
     try:
         mpd.create_tempory_output_files_for_mapped_colonies()
-    except:
+    except FileExistsError:
         pass
-    print(mpd.box_heights)
-    print(mpd.box_widths)
     mpd.add_all_colonies_to_plot()
+
+
+if __name__ == "__main__":
+    generated_output_path = "/home/rory/PhD_sync/BiofilmPhageDES/GeneratedOutput"
+    dir_path = (
+        f"{generated_output_path}/SimOutput/ChainingPhaseDiagramFinal/run379/repeat0/"
+    )
+    create_example_morphology_plot(dir_path)
